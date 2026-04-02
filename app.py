@@ -98,41 +98,44 @@ def main():
             st.write("**建議句型：** `Tolo ko malikakaay niyam.` (我們有三個兄弟姊妹。)")
 
     elif app_mode == "第三部分：看圖說話":
-        st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (10 分)</h3><p>【說明】 請根據下面四個圖片及中文提示，選擇一個、兩個、三個或全部的圖片，以族語簡短地說說你的想法。作答時間 2 分鐘。</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (10 分)</h3></div>', unsafe_allow_html=True)
         
-        # 動態抓取目錄下的圖片，模擬 2x2 考卷排版
-        images = glob.glob('*.png') + glob.glob('*.jpg') + glob.glob('*.jpeg')
-        
-        # 若圖片不足 4 張，使用佔位符補齊
-        display_imgs = images[:4] if len(images) >= 4 else images + [None] * (4 - len(images))
-        
-        prompt_text = random.choice(oral_prompts) if oral_prompts else "我喜歡的活動"
+        # 1. 從 JSON 的 Key 中隨機抽出一個「提示詞」
+        prompt_text = random.choice(list(oral_prompts.keys()))
         st.markdown(f"#### 📌 中文提示：{prompt_text}")
         
-        # 繪製 2x2 圖片矩陣 (完全仿造考卷)
+        # 2. 根據抽中的提示詞，精準抓取對應的 4 張圖片檔名
+        target_images = oral_prompts[prompt_text]
+        
+        # 3. 補齊完整路徑 (加上 images/ 資料夾前綴)
+        display_imgs = []
+        for img_name in target_images:
+            img_path = os.path.join("images", img_name)
+            # 檢查圖片檔案是否真的存在，不存在則給 None
+            display_imgs.append(img_path if os.path.exists(img_path) else None)
+        
+        # 4. 繪製 2x2 圖片矩陣 (與考卷排版一致)
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('<div class="q-number">圖片 A</div>', unsafe_allow_html=True)
-            if display_imgs[0]: st.image(display_imgs[0], use_column_width=True)
-            else: st.info("無圖片檔案 A")
+            if display_imgs[0]: st.image(display_imgs[0], use_container_width=True)
+            else: st.info("無圖片檔案 (請檢查檔名)")
             
             st.markdown('<div class="q-number">圖片 C</div>', unsafe_allow_html=True)
-            if display_imgs[2]: st.image(display_imgs[2], use_column_width=True)
-            else: st.info("無圖片檔案 C")
+            if display_imgs[2]: st.image(display_imgs[2], use_container_width=True)
+            else: st.info("無圖片檔案 (請檢查檔名)")
             
         with col2:
             st.markdown('<div class="q-number">圖片 B</div>', unsafe_allow_html=True)
-            if display_imgs[1]: st.image(display_imgs[1], use_column_width=True)
-            else: st.info("無圖片檔案 B")
+            if display_imgs[1]: st.image(display_imgs[1], use_container_width=True)
+            else: st.info("無圖片檔案 (請檢查檔名)")
             
             st.markdown('<div class="q-number">圖片 D</div>', unsafe_allow_html=True)
-            if display_imgs[3]: st.image(display_imgs[3], use_column_width=True)
-            else: st.info("無圖片檔案 D")
+            if display_imgs[3]: st.image(display_imgs[3], use_container_width=True)
+            else: st.info("無圖片檔案 (請檢查檔名)")
 
         st.divider()
-        st.text_area("✍️ 試著寫下你的族語草稿 (正式考試為口說)：", height=150, placeholder="例如：Itini i coka A, maolah kako mimali...")
-        if st.button("💾 儲存練習"):
-            st.success("練習已記錄！")
+        st.text_area("✍️ 草稿：", height=100)
 
 # --- [啟動] ---
 if __name__ == "__main__":
