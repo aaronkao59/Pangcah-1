@@ -1,0 +1,68 @@
+{
+  "我喜歡的活動": [
+    "activity_01.jpg", 
+    "activity_02.jpg", 
+    "activity_03.jpg", 
+    "activity_04.jpg"
+  ],
+  "拜訪爺爺的一天": [
+    "grandpa_01.jpg", 
+    "grandpa_02.jpg", 
+    "grandpa_03.jpg", 
+    "grandpa_04.jpg"
+  ],
+  "我和朋友玩耍": [
+    "friends_01.jpg", 
+    "friends_02.jpg", 
+    "friends_03.jpg", 
+    "friends_04.jpg"
+  ],
+  "我的生活作息": [
+    "routine_01.jpg", 
+    "routine_02.jpg", 
+    "routine_03.jpg", 
+    "routine_04.jpg"
+  ],
+  "我喜歡的天氣": [
+    "weather_01.jpg", 
+    "weather_02.jpg", 
+    "weather_03.jpg", 
+    "weather_04.jpg"
+  ],
+  "我喜歡吃的東西": [
+    "food_01.jpg", 
+    "food_02.jpg", 
+    "food_03.jpg", 
+    "food_04.jpg"
+  ],
+  "伴我讀書的用品": [
+    "study_01.jpg", 
+    "study_02.jpg", 
+    "study_03.jpg", 
+    "study_04.jpg"
+  ],
+  "我喜歡的職業": [
+    "job_01.jpg", 
+    "job_02.jpg", 
+    "job_03.jpg", 
+    "job_04.jpg"
+  ],
+  "我喜歡的活動2": [
+    "activity2_01.jpg", 
+    "activity2_02.jpg", 
+    "activity2_03.jpg", 
+    "activity2_04.jpg"
+  ],
+  "我的生活作息2": [
+    "routine2_01.jpg", 
+    "routine2_02.jpg", 
+    "routine2_03.jpg", 
+    "routine2_04.jpg"
+  ],
+  "我喜歡的動物": [
+    "animal_01.jpg", 
+    "animal_02.jpg", 
+    "animal_03.jpg", 
+    "animal_04.jpg"
+  ]
+}
