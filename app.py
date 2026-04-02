@@ -9,19 +9,17 @@ st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", l
 # --- [模組 A] 極速資料載入引擎 (內建單音節過濾與防呆機制) ---
 @st.cache_data
 def load_static_data():
-    # 1. 載入單詞庫並處理潛在的讀取錯誤 (對應 vocab_cleaned 格式)
     try:
         vocab_df = pd.read_csv("data/vocab.csv")
         if 'word' not in vocab_df.columns:
             vocab_df = pd.DataFrame([{"word": "rengos"}, {"word": "lotong"}, {"word": "enem"}])
-        vocab_df = vocab_df.dropna(subset=['word']) # 清除空值
+        vocab_df = vocab_df.dropna(subset=['word']) 
     except (FileNotFoundError, pd.errors.EmptyDataError):
         vocab_df = pd.DataFrame([
             {"word": "rengos"}, {"word": "lotong"}, {"word": "enem"}, 
             {"word": "mali"}, {"word": "dafak"}, {"word": "mami'"}, {"word": "posi"}
         ])
 
-    # 2. 單音節過濾器
     def is_multi_syllable(word):
         vowels = set("aeiouAEIOU")
         vowel_count = sum(1 for char in str(word) if char in vowels)
@@ -36,7 +34,6 @@ def load_static_data():
             {"word": "mali"}, {"word": "dafak"}
         ])
     
-    # 3. 內建 [提示詞-圖片] 關聯矩陣
     prompts_dict = {
         "我喜歡的活動": ["activity_01.png", "activity_02.png", "activity_03.png", "activity_04.png"],
         "拜訪爺爺的一天": ["grandpa_01.png", "grandpa_02.png", "grandpa_03.png", "grandpa_04.png"],
@@ -54,22 +51,38 @@ def load_static_data():
     return valid_vocab_df, prompts_dict
 
 # --- [模組 B] 介面視覺規範 ---
-# 修正 1：針對 word-card 進行 RWD 響應式字體縮放，並調整 padding
 st.markdown("""
     <style>
     .exam-banner { background-color: #f0f7ff; border-left: 10px solid #1e40af; padding: 20px; border-radius: 5px; margin-bottom: 25px; }
-    .word-card { 
-        font-family: 'Courier New', monospace; 
-        font-size: clamp(16px, 2vw, 28px); /* 字體會隨螢幕大小在 16px 到 28px 之間動態縮放 */
-        font-weight: bold; 
-        color: #1e3a8a; 
-        text-align: center; 
-        padding: 20px 5px; /* 縮小左右內邊距，給長單字更多空間 */
-        border: 2px solid #e2e8f0; 
-        border-radius: 15px; 
-        background: white; 
-        transition: 0.3s; 
-        word-wrap: break-word; /* 萬一真的太長才允許安全換行 */
+    
+    /* 終極排版修正：使用 Flexbox 完全取代 st.columns */
+    .vocab-container {
+        display: flex;
+        flex-wrap: wrap; /* 空間不夠時自動換行排列 */
+        gap: 15px;
+        justify-content: center;
+        width: 100%;
+        margin-top: 20px;
+    }
+    .vocab-card {
+        flex: 1 1 0;
+        min-width: 180px; /* 卡片最小寬度，確保不會被過度擠壓 */
+        padding: 25px 10px;
+        border: 2px solid #e2e8f0;
+        border-radius: 15px;
+        background: white;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .vocab-num {
+        color: #64748b; font-size: 14px; margin-bottom: 8px; font-weight: bold;
+    }
+    .vocab-word {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #1e3a8a;
+        font-size: 26px;
+        white-space: nowrap; /* 絕對指令：禁止單字換行斷掉 */
     }
     .q-number { color: #64748b; font-size: 14px; margin-bottom: 5px; font-weight: bold; }
     </style>
@@ -108,10 +121,18 @@ def main():
         while len(test_words) < 5:
             test_words.append("---")
 
-        cols = st.columns(5)
+        # 這裡放棄 st.columns，改用純 HTML 渲染彈性卡片容器
+        cards_html = '<div class="vocab-container">'
         for i, word in enumerate(test_words):
-            with cols[i]:
-                st.markdown(f'<div class="q-number">1-{i+1}.</div><div class="word-card">{word}</div>', unsafe_allow_html=True)
+            cards_html += f'''
+                <div class="vocab-card">
+                    <div class="vocab-num">1-{i+1}.</div>
+                    <div class="vocab-word">{word}</div>
+                </div>
+            '''
+        cards_html += '</div>'
+        
+        st.markdown(cards_html, unsafe_allow_html=True)
 
     elif app_mode == "第二部分：簡答題":
         st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 (每題 4 分，共 20 分)</h3></div>', unsafe_allow_html=True)
@@ -122,11 +143,9 @@ def main():
     elif app_mode == "第三部分：看圖說話":
         st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (10 分)</h3></div>', unsafe_allow_html=True)
         
-        # 修正 2：加入下拉選單
         topic_options = ["🎲 隨機抽題"] + list(oral_prompts.keys())
         selected_topic = st.selectbox("🎯 請選擇練習主題：", topic_options)
         
-        # 判斷是否為隨機抽題
         if selected_topic == "🎲 隨機抽題":
             prompt_text = random.choice(list(oral_prompts.keys()))
         else:
