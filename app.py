@@ -24,7 +24,6 @@ def save_single_draft(topic, content):
     """將單一題目的草稿寫入硬碟"""
     drafts = load_all_drafts()
     drafts[topic] = content
-    # 確保 data 資料夾存在
     os.makedirs("data", exist_ok=True)
     with open(DRAFTS_FILE, "w", encoding="utf-8") as f:
         json.dump(drafts, f, ensure_ascii=False, indent=2)
@@ -76,31 +75,56 @@ def main():
     app_mode = st.sidebar.radio("測驗單元切換", ["📝 考試說明", "第一部分：單詞朗讀", "第二部分：簡答題", "第三部分：看圖說話"])
 
     if app_mode == "📝 考試說明":
-        st.markdown('<div class="exam-banner"><h3>📝 初級認證測驗指南</h3></div>', unsafe_allow_html=True)
-        exam_info = {"項目": ["合格標準"], "說明": ["聽力 45 + 口說 15 (總分60)"]}
-        st.table(pd.DataFrame(exam_info))
+        # 恢復完整的考試說明表格
+        st.markdown('<div class="exam-banner"><h3>📝 初級認證測驗指南</h3><p>考前必讀：測驗項目、配分與合格標準</p></div>', unsafe_allow_html=True)
+        exam_info = {
+            "項目 (Category)": ["測驗項目與配分", "測驗時間", "範圍與參考教材", "合格標準", "測驗方式"],
+            "內容說明 (Details)": [
+                "1. 口說測驗 (佔 40 分)：單詞朗讀 (10%)、簡答題 (20%)、看圖說話 (10%)\n2. 聽力測驗 (佔 60 分)：是非題、選擇題、配合題",
+                "口說測驗：約 5 分鐘\n聽力測驗：約 20 分鐘",
+                "1. 九階教材（第 1 至 3 階）\n2. 國中版句型篇\n3. 初級教材 — 生活會話篇\n4. 原住民族語言學習詞表",
+                "總分須達 60 分（含）以上，且必須「同時」符合：聽力達 45 分，口說達 15 分",
+                "電腦數位化測驗：看螢幕聽語音後點選答案或對麥克風回答。"
+            ]
+        }
+        df_info = pd.DataFrame(exam_info)
+        df_info.index = [""] * len(df_info) 
+        st.table(df_info)
 
     elif app_mode == "第一部分：單詞朗讀":
-        st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀</h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 (每題 2 分，共 10 分)</h3></div>', unsafe_allow_html=True)
         if st.button("🔄 刷新考卷"): st.rerun()
+        
         test_words = vocab_df.sample(n=min(5, len(vocab_df)))['word'].tolist()
         cols = st.columns(5)
+        
+        # 維持動態字體縮放，確保單字不會被折行
         for i, word in enumerate(test_words + ["---"]*(5-len(test_words))):
             with cols[i]:
                 w_str = str(word)
-                f_size = "1.6rem" if len(w_str) <= 6 else ("1.1rem" if len(w_str) <= 10 else "0.9rem")
+                if len(w_str) <= 6:
+                    f_size = "1.6rem"
+                elif len(w_str) <= 10:
+                    f_size = "1.1rem"
+                else:
+                    f_size = "0.9rem"
+                    
                 st.markdown(f"""<div style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%;">
                     <div class="q-number">1-{i+1}.</div>
                     <div style="color: #1e3a8a; font-weight: bold; font-family: 'Courier New', monospace; font-size: {f_size}; white-space: nowrap;">{w_str}</div>
                 </div>""", unsafe_allow_html=True)
 
+    elif app_mode == "第二部分：簡答題":
+        st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 (每題 4 分，共 20 分)</h3></div>', unsafe_allow_html=True)
+        q_idx = st.select_slider("請選擇當前播放題號：", options=["2-1", "2-2", "2-3", "2-4", "2-5"])
+        st.write(f"#### 🔊 {q_idx} (聽...)")
+        st.progress(100, text="作答倒數：15 秒")
+
     elif app_mode == "第三部分：看圖說話":
         st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (草稿已自動同步儲存)</h3></div>', unsafe_allow_html=True)
         
-        # 1. 處理選題邏輯
         topic_list = list(oral_prompts.keys())
         
-        # 處理「隨機抽題」的特殊持久化邏輯
         if 'current_topic' not in st.session_state:
             st.session_state.current_topic = topic_list[0]
 
@@ -115,7 +139,6 @@ def main():
 
         st.markdown(f"#### 📌 當前主題：{prompt_text}")
         
-        # 2. 顯示圖片
         target_images = oral_prompts[prompt_text]
         cols = st.columns(2)
         for i, label in enumerate(['A','B','C','D']):
@@ -127,11 +150,9 @@ def main():
 
         st.divider()
         
-        # 3. 【核心：永久化草稿區】
-        # 從歷史紀錄中抓取該題目的草稿，若無則為空
+        # 永久化草稿區
         existing_draft = all_drafts.get(prompt_text, "")
         
-        # 使用 key 綁定題目，確保切換題目時文字內容跟著變
         draft_input = st.text_area(
             f"✍️ 【{prompt_text}】的專屬草稿（系統會自動儲存）：",
             value=existing_draft,
@@ -140,7 +161,6 @@ def main():
             help="此處輸入的內容會自動存檔，下次選到同一題時會自動載入。"
         )
 
-        # 只要內容有變動，就執行存檔
         if draft_input != existing_draft:
             save_single_draft(prompt_text, draft_input)
             st.toast(f"✅ {prompt_text} 草稿已更新", icon='💾')
