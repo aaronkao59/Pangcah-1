@@ -9,7 +9,7 @@ st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", l
 # --- [模組 A] 極速資料載入引擎 (內建單音節過濾與防呆機制) ---
 @st.cache_data
 def load_static_data():
-    # 1. 載入單詞庫並處理潛在的讀取錯誤
+    # 1. 載入單詞庫並處理潛在的讀取錯誤 (對應 vocab_cleaned 格式)
     try:
         vocab_df = pd.read_csv("data/vocab.csv")
         if 'word' not in vocab_df.columns:
@@ -21,20 +21,15 @@ def load_static_data():
             {"word": "mali"}, {"word": "dafak"}, {"word": "mami'"}, {"word": "posi"}
         ])
 
-    # 2. 【核心條件追加】單音節過濾器
+    # 2. 單音節過濾器
     def is_multi_syllable(word):
-        # 定義阿美語母音
         vowels = set("aeiouAEIOU")
-        # 計算單字中的母音數量 (代表音節數)
         vowel_count = sum(1 for char in str(word) if char in vowels)
-        # 嚴禁單音節：母音數量必須大於 1
-        return vowel_count > 1
+        return vowel_count > 1 # 嚴禁單音節
 
-    # 套用過濾器，剔除單音節字
     vocab_df['is_valid'] = vocab_df['word'].apply(is_multi_syllable)
     valid_vocab_df = vocab_df[vocab_df['is_valid'] == True]
 
-    # 防呆：如果過濾後題庫被清空了，強行注入合法預設值
     if valid_vocab_df.empty:
         valid_vocab_df = pd.DataFrame([
             {"word": "rengos"}, {"word": "lotong"}, {"word": "enem"}, 
@@ -59,11 +54,23 @@ def load_static_data():
     return valid_vocab_df, prompts_dict
 
 # --- [模組 B] 介面視覺規範 ---
+# 修正 1：針對 word-card 進行 RWD 響應式字體縮放，並調整 padding
 st.markdown("""
     <style>
     .exam-banner { background-color: #f0f7ff; border-left: 10px solid #1e40af; padding: 20px; border-radius: 5px; margin-bottom: 25px; }
-    .word-card { font-family: 'Courier New', monospace; font-size: 32px; font-weight: bold; color: #1e3a8a; text-align: center; 
-                 padding: 30px; border: 2px solid #e2e8f0; border-radius: 15px; background: white; transition: 0.3s; }
+    .word-card { 
+        font-family: 'Courier New', monospace; 
+        font-size: clamp(16px, 2vw, 28px); /* 字體會隨螢幕大小在 16px 到 28px 之間動態縮放 */
+        font-weight: bold; 
+        color: #1e3a8a; 
+        text-align: center; 
+        padding: 20px 5px; /* 縮小左右內邊距，給長單字更多空間 */
+        border: 2px solid #e2e8f0; 
+        border-radius: 15px; 
+        background: white; 
+        transition: 0.3s; 
+        word-wrap: break-word; /* 萬一真的太長才允許安全換行 */
+    }
     .q-number { color: #64748b; font-size: 14px; margin-bottom: 5px; font-weight: bold; }
     </style>
 """, unsafe_allow_html=True)
@@ -95,11 +102,9 @@ def main():
         st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 (每題 2 分，共 10 分)</h3></div>', unsafe_allow_html=True)
         if st.button("🔄 刷新考卷"): st.rerun()
             
-        # 安全抽樣：最多抽 5 題，題庫不夠就全拿
         sample_size = min(5, len(vocab_df))
         test_words = vocab_df.sample(n=sample_size)['word'].tolist()
         
-        # 畫面渲染防呆：萬一抽出來不到 5 題，用 "---" 補齊 5 個空格，避免 UI 錯位報錯
         while len(test_words) < 5:
             test_words.append("---")
 
@@ -117,7 +122,16 @@ def main():
     elif app_mode == "第三部分：看圖說話":
         st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (10 分)</h3></div>', unsafe_allow_html=True)
         
-        prompt_text = random.choice(list(oral_prompts.keys()))
+        # 修正 2：加入下拉選單
+        topic_options = ["🎲 隨機抽題"] + list(oral_prompts.keys())
+        selected_topic = st.selectbox("🎯 請選擇練習主題：", topic_options)
+        
+        # 判斷是否為隨機抽題
+        if selected_topic == "🎲 隨機抽題":
+            prompt_text = random.choice(list(oral_prompts.keys()))
+        else:
+            prompt_text = selected_topic
+
         st.markdown(f"#### 📌 中文提示：{prompt_text}")
         
         target_images = oral_prompts[prompt_text]
