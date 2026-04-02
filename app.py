@@ -6,7 +6,7 @@ import os
 # --- [元數據與效能設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
 
-# --- [模組 A] 極速資料載入引擎 (內建單音節過濾與防呆機制) ---
+# --- [模組 A] 極速資料載入引擎 ---
 @st.cache_data
 def load_static_data():
     try:
@@ -50,40 +50,10 @@ def load_static_data():
         
     return valid_vocab_df, prompts_dict
 
-# --- [模組 B] 介面視覺規範 ---
+# --- [模組 B] 介面視覺規範 (移除複雜 CSS，改用內聯樣式) ---
 st.markdown("""
     <style>
     .exam-banner { background-color: #f0f7ff; border-left: 10px solid #1e40af; padding: 20px; border-radius: 5px; margin-bottom: 25px; }
-    
-    /* 終極排版修正：使用 Flexbox 完全取代 st.columns */
-    .vocab-container {
-        display: flex;
-        flex-wrap: wrap; /* 空間不夠時自動換行排列 */
-        gap: 15px;
-        justify-content: center;
-        width: 100%;
-        margin-top: 20px;
-    }
-    .vocab-card {
-        flex: 1 1 0;
-        min-width: 180px; /* 卡片最小寬度，確保不會被過度擠壓 */
-        padding: 25px 10px;
-        border: 2px solid #e2e8f0;
-        border-radius: 15px;
-        background: white;
-        text-align: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-    .vocab-num {
-        color: #64748b; font-size: 14px; margin-bottom: 8px; font-weight: bold;
-    }
-    .vocab-word {
-        font-family: 'Courier New', monospace;
-        font-weight: bold;
-        color: #1e3a8a;
-        font-size: 26px;
-        white-space: nowrap; /* 絕對指令：禁止單字換行斷掉 */
-    }
     .q-number { color: #64748b; font-size: 14px; margin-bottom: 5px; font-weight: bold; }
     </style>
 """, unsafe_allow_html=True)
@@ -121,18 +91,26 @@ def main():
         while len(test_words) < 5:
             test_words.append("---")
 
-        # 這裡放棄 st.columns，改用純 HTML 渲染彈性卡片容器
-        cards_html = '<div class="vocab-container">'
+        # 恢復使用原生的 st.columns，保證穩定度
+        cols = st.columns(5)
         for i, word in enumerate(test_words):
-            cards_html += f'''
-                <div class="vocab-card">
-                    <div class="vocab-num">1-{i+1}.</div>
-                    <div class="vocab-word">{word}</div>
+            with cols[i]:
+                # 【核心修正】動態字體計算：單字越長，字體越小，確保不換行
+                word_str = str(word)
+                if len(word_str) <= 6:
+                    f_size = "1.6rem"  # 短字用大字體
+                elif len(word_str) <= 10:
+                    f_size = "1.2rem"  # 中等字長稍微縮小
+                else:
+                    f_size = "0.95rem" # 超長單字使用小字體，確保塞進框內
+
+                # 使用行內樣式 (Inline CSS)，避免全域 CSS 污染
+                st.markdown(f"""
+                <div style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); height: 100%;">
+                    <div style="color: #64748b; font-size: 0.85rem; margin-bottom: 8px; font-weight: bold;">1-{i+1}.</div>
+                    <div style="color: #1e3a8a; font-weight: bold; font-family: 'Courier New', monospace; font-size: {f_size}; letter-spacing: -0.5px; white-space: nowrap;">{word_str}</div>
                 </div>
-            '''
-        cards_html += '</div>'
-        
-        st.markdown(cards_html, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
 
     elif app_mode == "第二部分：簡答題":
         st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 (每題 4 分，共 20 分)</h3></div>', unsafe_allow_html=True)
