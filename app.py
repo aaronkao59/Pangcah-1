@@ -5,7 +5,6 @@ import PyPDF2
 import os
 import glob
 import re
-from PIL import Image
 
 # --- [元數據與憲法設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
@@ -66,11 +65,35 @@ def main():
     st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Emblem_of_Council_of_Indigenous_Peoples.svg/200px-Emblem_of_Council_of_Indigenous_Peoples.svg.png", width=150)
     st.sidebar.title("🌊 阿美語初級認證")
     st.sidebar.markdown("---")
-    app_mode = st.sidebar.radio("測驗單元切換", ["第一部分：單詞朗讀", "第二部分：簡答題", "第三部分：看圖說話"])
+    
+    # 這裡將「考試說明與指南」設為獨立的第一個選單
+    app_mode = st.sidebar.radio("測驗單元切換", ["📝 考試說明與指南", "第一部分：單詞朗讀", "第二部分：簡答題", "第三部分：看圖說話"])
     
     st.sidebar.info("💡 系統已自動載入目錄下所有 PDF 與截圖題庫。")
 
-    if app_mode == "第一部分：單詞朗讀":
+    # --- 獨立頁籤：考試說明 ---
+    if app_mode == "📝 考試說明與指南":
+        st.markdown('<div class="exam-banner"><h3>📝 初級認證測驗指南</h3><p>考前必讀：測驗項目、配分與合格標準</p></div>', unsafe_allow_html=True)
+        
+        exam_info = {
+            "項目 (Category)": ["測驗項目與配分", "測驗時間", "範圍與參考教材", "合格標準", "測驗方式"],
+            "內容說明 (Details)": [
+                "1. 口說測驗 (佔 40 分)：單詞朗讀 (10%)、簡答題 (20%)、看圖說話 (10%)\n2. 聽力測驗 (佔 60 分)：是非題、選擇題、配合題",
+                "口說測驗：約 5 分鐘\n聽力測驗：約 20 分鐘",
+                "1. 九階教材（第 1 至 3 階）\n2. 國中版句型篇\n3. 初級教材 — 生活會話篇\n4. 原住民族語言學習詞表",
+                "總分須達 60 分（含）以上，且必須「同時」符合：\n• 聽力成績達 45 分（含）以上\n• 口說成績達 15 分（含）以上",
+                "電腦數位化測驗\n• 聽力：看螢幕聽語音後點選答案。\n• 口說：看螢幕聽語音後，對麥克風以族語回答。"
+            ]
+        }
+        
+        df_info = pd.DataFrame(exam_info)
+        df_info.index = [""] * len(df_info) 
+        st.table(df_info)
+        
+        st.info("💡 戰術建議：口說測驗只要拿到 15 分即達標！請務必把握「第一部分：單詞朗讀」與「第三部分：看圖說話」的基礎分數。")
+
+    # --- 測驗模組 ---
+    elif app_mode == "第一部分：單詞朗讀":
         st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 (每題 2 分，共 10 分)</h3><p>【說明】 試卷上有 5 個族語單詞，請在準備時間 2 分鐘後，聽到「請開始回答」時，依序將單詞唸出，回答時間 1 分半鐘。</p></div>', unsafe_allow_html=True)
         
         if st.button("🔄 刷新考卷"):
