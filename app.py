@@ -6,19 +6,42 @@ import os
 # --- [元數據與效能設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
 
-# --- [模組 A] 極速資料載入引擎 (直接內建題庫，免讀取 JSON 防呆版) ---
+# --- [模組 A] 極速資料載入引擎 (內建單音節過濾與防呆機制) ---
 @st.cache_data
 def load_static_data():
-    # 1. 載入單詞庫 (若 CSV 不存在則給預設值防呆)
+    # 1. 載入單詞庫並處理潛在的讀取錯誤
     try:
         vocab_df = pd.read_csv("data/vocab.csv")
-    except FileNotFoundError:
+        if 'word' not in vocab_df.columns:
+            vocab_df = pd.DataFrame([{"word": "rengos"}, {"word": "lotong"}, {"word": "enem"}])
+        vocab_df = vocab_df.dropna(subset=['word']) # 清除空值
+    except (FileNotFoundError, pd.errors.EmptyDataError):
         vocab_df = pd.DataFrame([
             {"word": "rengos"}, {"word": "lotong"}, {"word": "enem"}, 
             {"word": "mali"}, {"word": "dafak"}, {"word": "mami'"}, {"word": "posi"}
         ])
+
+    # 2. 【核心條件追加】單音節過濾器
+    def is_multi_syllable(word):
+        # 定義阿美語母音
+        vowels = set("aeiouAEIOU")
+        # 計算單字中的母音數量 (代表音節數)
+        vowel_count = sum(1 for char in str(word) if char in vowels)
+        # 嚴禁單音節：母音數量必須大於 1
+        return vowel_count > 1
+
+    # 套用過濾器，剔除單音節字
+    vocab_df['is_valid'] = vocab_df['word'].apply(is_multi_syllable)
+    valid_vocab_df = vocab_df[vocab_df['is_valid'] == True]
+
+    # 防呆：如果過濾後題庫被清空了，強行注入合法預設值
+    if valid_vocab_df.empty:
+        valid_vocab_df = pd.DataFrame([
+            {"word": "rengos"}, {"word": "lotong"}, {"word": "enem"}, 
+            {"word": "mali"}, {"word": "dafak"}
+        ])
     
-    # 2. 直接內建 [提示詞-圖片] 關聯矩陣 (徹底解決 JSON 讀取報錯問題)
+    # 3. 內建 [提示詞-圖片] 關聯矩陣
     prompts_dict = {
         "我喜歡的活動": ["activity_01.png", "activity_02.png", "activity_03.png", "activity_04.png"],
         "拜訪爺爺的一天": ["grandpa_01.png", "grandpa_02.png", "grandpa_03.png", "grandpa_04.png"],
@@ -33,7 +56,7 @@ def load_static_data():
         "我喜歡的動物": ["animal_01.png", "animal_02.png", "animal_03.png", "animal_04.png"]
     }
         
-    return vocab_df, prompts_dict
+    return valid_vocab_df, prompts_dict
 
 # --- [模組 B] 介面視覺規範 ---
 st.markdown("""
@@ -46,7 +69,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def main():
-    # 瞬間載入所有靜態資源
     vocab_df, oral_prompts = load_static_data()
 
     st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Emblem_of_Council_of_Indigenous_Peoples.svg/200px-Emblem_of_Council_of_Indigenous_Peoples.svg.png", width=150)
@@ -73,7 +95,14 @@ def main():
         st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 (每題 2 分，共 10 分)</h3></div>', unsafe_allow_html=True)
         if st.button("🔄 刷新考卷"): st.rerun()
             
-        test_words = vocab_df.sample(n=min(5, len(vocab_df)))['word'].tolist()
+        # 安全抽樣：最多抽 5 題，題庫不夠就全拿
+        sample_size = min(5, len(vocab_df))
+        test_words = vocab_df.sample(n=sample_size)['word'].tolist()
+        
+        # 畫面渲染防呆：萬一抽出來不到 5 題，用 "---" 補齊 5 個空格，避免 UI 錯位報錯
+        while len(test_words) < 5:
+            test_words.append("---")
+
         cols = st.columns(5)
         for i, word in enumerate(test_words):
             with cols[i]:
@@ -88,21 +117,15 @@ def main():
     elif app_mode == "第三部分：看圖說話":
         st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (10 分)</h3></div>', unsafe_allow_html=True)
         
-        # 1. 從內建字典的 Key 中隨機抽出一個「提示詞」
         prompt_text = random.choice(list(oral_prompts.keys()))
         st.markdown(f"#### 📌 中文提示：{prompt_text}")
         
-        # 2. 根據抽中的提示詞，精準抓取對應的 4 張圖片檔名
         target_images = oral_prompts[prompt_text]
-        
-        # 3. 補齊完整路徑 (加上 images/ 資料夾前綴)
         display_imgs = []
         for img_name in target_images:
             img_path = os.path.join("images", img_name)
-            # 檢查圖片檔案是否真的存在，不存在則給 None
             display_imgs.append(img_path if os.path.exists(img_path) else None)
         
-        # 4. 繪製 2x2 圖片矩陣 (與考卷排版一致)
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('<div class="q-number">圖片 A</div>', unsafe_allow_html=True)
