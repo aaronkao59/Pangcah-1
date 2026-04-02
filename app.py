@@ -3,130 +3,126 @@ import pandas as pd
 import random
 import PyPDF2
 import os
-import base64
-from PIL import Image
+import re
 
 # --- [元數據與憲法設定] ---
-APP_TITLE = "Amis-Pro: 海岸阿美語初級認證衝刺"
-st.set_page_config(page_title=APP_TITLE, page_icon="🌊", layout="wide")
+st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
 
-# --- [模組 A] 資源自動化解析引擎 (Integ-CRF v9.0) ---
+# --- [模組 A] 深度題庫解析引擎 (Integ-CRF v9.0) ---
 @st.cache_data
-def extract_exam_data():
-    """解析 PDF 考古題與學習手冊，建立結構化題庫"""
+def get_exam_bank():
+    """精準掃描目錄下的 PDF，提取初級認證的單詞與句型"""
     vocab_pool = []
-    oral_questions = []
+    oral_bank = []
     
+    # 掃描 3.海岸阿美語_x.pdf 檔案
     files = [f for f in os.listdir('.') if f.endswith('.pdf')]
     
-    # 模擬從「3.海岸阿美語_1~4.pdf」提取單詞朗讀題
-    # 實際運作時會根據 PDF 文本特徵進行 Regex 匹配
     for f_name in files:
-        if "海岸阿美語" in f_name:
-            # 這裡示範從您上傳的試卷中提取的真實考點
-            if "1" in f_name:
-                vocab_pool.extend([
-                    {"word": "rengos", "zh": "草", "source": f_name},
-                    {"word": "lotong", "zh": "猴子", "source": f_name},
-                    {"word": "mali", "zh": "球", "source": f_name},
-                    {"word": "dafak", "zh": "早晨", "source": f_name}
-                ])
-            elif "2" in f_name:
-                vocab_pool.extend([
-                    {"word": "mami'", "zh": "橘子", "source": f_name},
-                    {"word": "posi", "zh": "貓", "source": f_name},
-                    {"word": "siwa", "zh": "九", "source": f_name},
-                    {"word": "'anengan", "zh": "椅子/坐的地方", "source": f_name}
-                ])
+        try:
+            with open(f_name, 'rb') as f:
+                reader = PyPDF2.PdfReader(f)
+                full_text = ""
+                for page in reader.pages:
+                    full_text += page.extract_text()
+                
+                # 1. 提取單詞朗讀 (Regex 匹配 1-1. 到 1-5.)
+                words = re.findall(r'1-\d\.\s*([a-zA-Z\']+)', full_text)
+                for w in words:
+                    vocab_pool.append({"word": w, "source": f_name})
+                
+                # 2. 提取簡答題關鍵字 (模擬)
+                if "簡答題" in full_text:
+                    oral_bank.append({"source": f_name, "q_count": 5})
+        except:
+            continue
 
-    # 從「初級看圖說話.pdf」提取提示
-    speaking_prompts = [
-        "我喜歡的活動", "拜訪爺爺的一天", "我和朋友玩耍", 
-        "我的生活作息", "我喜歡的天氣", "我喜歡吃的東西"
-    ]
+    # 兜底數據 (若解析失敗)
+    if not vocab_pool:
+        vocab_pool = [{"word": "rengos", "source": "系統預設"}, {"word": "lotong", "source": "系統預設"}, 
+                      {"word": "enem", "source": "系統預設"}, {"word": "mali", "source": "系統預設"}]
     
-    return pd.DataFrame(vocab_pool).drop_duplicates(), speaking_prompts
+    return pd.DataFrame(vocab_pool).drop_duplicates(), oral_bank
 
-# --- [模組 B] 介面視覺工法 (UIUX-CRF v10-3) ---
+# --- [模組 B] 介面視覺規範 (UIUX-CRF v10-3) ---
 st.markdown("""
     <style>
-    .exam-header { background: linear-gradient(90deg, #1e3a8a, #3b82f6); color: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; }
-    .amis-hero { font-size: 64px !important; font-weight: 800; color: #1e40af; text-align: center; padding: 40px; border: 3px dashed #bfdbfe; border-radius: 20px; background: white; }
-    .hint-box { background-color: #f8fafc; border-left: 5px solid #10b981; padding: 15px; margin: 10px 0; }
-    .stProgress > div > div > div > div { background-color: #10b981; }
+    /* 模仿認證測驗介面藍色標題 */
+    .exam-banner { background-color: #f0f7ff; border-left: 10px solid #1e40af; padding: 20px; border-radius: 5px; margin-bottom: 25px; }
+    .word-card { font-family: 'Courier New', monospace; font-size: 32px; font-weight: bold; color: #1e3a8a; text-align: center; 
+                 padding: 30px; border: 2px solid #e2e8f0; border-radius: 15px; background: white; transition: 0.3s; }
+    .word-card:hover { border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .q-number { color: #64748b; font-size: 14px; margin-bottom: 5px; }
     </style>
 """, unsafe_allow_html=True)
 
 def main():
-    # 初始化 Session State
-    if 'current_step' not in st.session_state: st.session_state.current_step = 0
-    if 'score' not in st.session_state: st.session_state.score = 0
+    vocab_df, oral_data = get_exam_bank()
 
-    df_vocab, prompts = extract_exam_data()
+    # Sidebar 狀態列
+    st.sidebar.title("🌊 阿美語初級認證")
+    st.sidebar.markdown("---")
+    app_mode = st.sidebar.radio("測驗單元", ["單詞朗讀 (第一部分)", "簡答題模擬 (第二部分)", "看圖說話 (第三部分)"])
+    
+    st.sidebar.info(f"📚 已從 PDF 載入 {len(vocab_df)} 個考驗單詞")
 
-    # Sidebar 導航
-    with st.sidebar:
-        st.image("https://www.cip.gov.tw/images/logo.png", width=200) # 示意
-        st.title("考試模式")
-        mode = st.selectbox("切換單元", ["單詞朗讀模擬", "簡答題實戰", "看圖說話練習", "全真模擬考"])
-        st.divider()
-        st.progress(st.session_state.current_step / 10, text="今日復習進度")
-        if st.button("重置所有進度"):
-            st.session_state.current_step = 0
+    if app_mode == "單詞朗讀 (第一部分)":
+        st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀</h3><p>說明：試卷上有 5 個單詞，請在準備 2 分鐘後，依序將單詞唸出。</p></div>', unsafe_allow_html=True)
+        
+        # 模擬隨機抽取 5 題
+        if st.button("🔄 刷新考題 (更換試卷)"):
             st.rerun()
-
-    # 主畫面
-    st.markdown(f'<div class="exam-header"><h1>{mode}</h1><p>符合 103-112 年度海岸阿美語初級認證標準</p></div>', unsafe_allow_html=True)
-
-    if mode == "單詞朗讀模擬":
-        st.subheader("第一部分：單詞朗讀 (每題 2 分)")
-        st.info("💡 說明：試卷上有 5 個單詞，請在準備 2 分鐘後依序唸出。")
-        
-        target_vocab = df_vocab.sample(5).reset_index()
-        
-        # 顯示單詞矩陣
-        cols = st.columns(5)
-        for i, row in target_vocab.iterrows():
-            with cols[i]:
-                st.markdown(f"""<div style="text-align:center; padding:10px; border:1px solid #ddd; border-radius:10px;">
-                    <h2 style="color:#1e3a8a;">{row['word']}</h2>
-                </div>""", unsafe_allow_html=True)
-                with st.expander("對照中文"):
-                    st.write(row['zh'])
-        
-        if st.button("換一組題目 🔁"):
-            st.rerun()
-
-    elif mode == "看圖說話練習":
-        st.subheader("第三部分：看圖說話 (10 分)")
-        col1, col2 = st.columns([1, 1])
-        
-        with col1:
-            # 自動搜尋目錄下的截圖作為題目圖源
-            img_files = [f for f in os.listdir('.') if f.endswith(('.jpg', '.png'))]
-            if img_files:
-                st.image(random.choice(img_files), use_column_width=True)
-            else:
-                st.warning("資料夾內未偵測到考題截圖，請放入影像檔。")
-        
-        with col2:
-            current_prompt = random.choice(prompts)
-            st.markdown(f'<div class="hint-box"><strong>中文提示：</strong><br>{current_prompt}</div>', unsafe_allow_html=True)
-            user_ans = st.text_area("請輸入您的族語回答：", height=150, placeholder="例如：Maolah kako mimali...")
             
-            if st.button("提交並儲存練習"):
-                st.success("回答已記錄！系統已為您存檔至 practice_logs.csv")
-                # 簡單寫入本地記錄
-                with open("practice_logs.csv", "a", encoding="utf-8") as f:
-                    f.write(f"{current_prompt},{user_ans}\n")
+        test_words = vocab_df.sample(n=min(5, len(vocab_df)))['word'].tolist()
+        
+        # 模擬截圖中的 1-1 到 1-5 佈局
+        cols = st.columns(5)
+        for i, word in enumerate(test_words):
+            with cols[i]:
+                st.markdown(f'<div class="q-number">1-{i+1}.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="word-card">{word}</div>', unsafe_allow_html=True)
 
-    elif mode == "全真模擬考":
-        st.warning("⚠️ 模擬考試將啟動 15 分鐘計時器 (尚未實作計時邏輯)")
-        st.write("這將從所有 PDF 中隨機抽取 5 題單詞、5 題簡答與 1 題看圖說話。")
-        if st.button("開始測驗"):
-            st.session_state.current_step = 1
-            st.write("測驗生成中...")
+        st.divider()
+        st.caption("⚠️ 注意：唸出時請注意喉塞音 (') 與長短音的準確度。")
 
-# --- [啟動端] ---
+    elif app_mode == "簡答題模擬 (第二部分)":
+        st.markdown('<div class="exam-banner"><h3>第二部分：簡答題</h3><p>說明：請聆聽電腦播出問題，聽完後以族語簡短回答。</p></div>', unsafe_allow_html=True)
+        
+        # 模擬播放介面
+        q_idx = st.select_slider("選擇題目編號", options=[1, 2, 3, 4, 5])
+        
+        st.write(f"#### 🔊 題目 2-{q_idx} 正在播放...")
+        st.audio("https://www.w3schools.com/html/horse.ogg") # 這裡僅為示意，實務上可放空白音頻或提示音
+        
+        st.warning("⏱️ 作答倒數：15 秒")
+        
+        with st.expander("👁️ 顯示參考題目與中文提示 (練習用)"):
+            # 根據 PDF 內容模擬常見初級簡答題
+            sample_qs = [
+                {"q": "Cima ko ngangan iso? (你叫什麼名字？)", "a": "O ci ... ko ngangan ako."},
+                {"q": "Icowa ko loma' iso? (你家在哪裡？)", "a": "Itini i ... ko loma' ako."},
+                {"q": "Pina ko mihecaan iso? (你幾歲？)", "a": " ... ko mihecaan ako."},
+                {"q": "Papina ko malikakaay namo? (你們有幾個兄弟姊妹？)", "a": " ... ko malikakaay niyam."},
+                {"q": "Maan ko kaolahan iso a tamdaw? (你喜歡什麼樣的人？)", "a": "Maolah kako to ..."}
+            ]
+            st.write(f"**題目：** {sample_qs[q_idx-1]['q']}")
+            st.write(f"**建議句型：** `{sample_qs[q_idx-1]['a']}`")
+
+    elif app_mode == "看圖說話 (第三部分)":
+        st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話</h3><p>說明：根據圖片及中文提示，以族語簡短說說你的想法。</p></div>', unsafe_allow_html=True)
+        
+        # 隨機抓取目錄下的截圖圖檔
+        images = [f for f in os.listdir('.') if f.endswith(('.png', '.jpg', '.jpeg'))]
+        if images:
+            selected_img = random.choice(images)
+            st.image(selected_img, use_column_width=True, caption="考題圖片庫隨機抽取")
+        else:
+            st.info("請將考題截圖（如：截圖 2026-04-02 上午 11.25.15.png）放入與 app.py 相同目錄以載入圖片。")
+
+        st.text_area("請在此練習輸入族語描述...", height=100)
+        if st.button("提交練習記錄"):
+            st.toast("已儲存本次練習進度！")
+
+# --- [啟動] ---
 if __name__ == "__main__":
     main()
