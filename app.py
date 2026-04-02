@@ -11,42 +11,20 @@ st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", l
 
 # --- [模組 A] 深度題庫解析引擎 (Integ-CRF v9.0) ---
 @st.cache_data
-def get_exam_bank():
-    """精準掃描目錄下的 PDF，提取初級認證的單詞與句型"""
-    vocab_pool = []
-    oral_bank = []
+def load_static_data():
+    # 1. 載入單詞庫 ... (省略，照舊)
     
-    files = glob.glob('*.pdf')
-    
-    for f_name in files:
-        try:
-            with open(f_name, 'rb') as f:
-                reader = PyPDF2.PdfReader(f)
-                full_text = ""
-                for page in reader.pages:
-                    full_text += page.extract_text()
-                
-                # 1. 提取單詞朗讀 (Regex 匹配 1-1. 到 1-5.)
-                words = re.findall(r'1-\d\.\s*([a-zA-Z\']+)', full_text)
-                for w in words:
-                    vocab_pool.append({"word": w, "source": f_name})
-                
-                # 2. 判斷是否有看圖說話提示
-                if "提示:" in full_text or "提示：" in full_text:
-                    prompts = re.findall(r'提示[:：](.*?)\)', full_text)
-                    oral_bank.extend(prompts)
-        except:
-            continue
-
-    if not vocab_pool:
-        vocab_pool = [{"word": "rengos", "source": "系統預設"}, {"word": "lotong", "source": "系統預設"}, 
-                      {"word": "enem", "source": "系統預設"}, {"word": "mali", "source": "系統預設"},
-                      {"word": "dafak", "source": "系統預設"}]
-                      
-    if not oral_bank:
-        oral_bank = ["我喜歡的活動", "拜訪爺爺的一天", "我和朋友玩耍", "我的生活作息"]
-    
-    return pd.DataFrame(vocab_pool).drop_duplicates(), list(set(oral_bank))
+    # 2. 載入 [提示詞-圖片] 關聯矩陣
+    try:
+        with open("data/prompts.json", "r", encoding="utf-8") as f:
+            prompts_dict = json.load(f)
+    except FileNotFoundError:
+        # 防呆預設資料
+        prompts_dict = {
+            "我喜歡的活動": ["act_01.jpg", "act_02.jpg", "act_03.jpg", "act_04.jpg"]
+        }
+        
+    return vocab_df, prompts_dict
 
 # --- [模組 B] 介面視覺規範 (UIUX-CRF v10-3) ---
 st.markdown("""
