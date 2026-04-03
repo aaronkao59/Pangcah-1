@@ -167,3 +167,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# ==========================================
+# 6. 頁尾資訊 (可選)
+# ==========================================
+st.sidebar.markdown("---")
+st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
+st.sidebar.caption("v1.1(New UI Upgraded)")
