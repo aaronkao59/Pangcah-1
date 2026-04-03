@@ -70,7 +70,7 @@ def main():
     vocab_df, oral_prompts = load_static_data()
     all_drafts = load_all_drafts() # 載入所有歷史草稿
 
-    st.sidebar.markdown("### :gray[❖ sawmAh 族語學院]")
+    st.sidebar.markdown("### <span style='color: #94a3b8;'>❖ sawm<span style='color: #ff4b4b;'>A</span>h 族語學院</span>", unsafe_allow_html=True)
     st.sidebar.title("🌊 阿美語初級認證")
     app_mode = st.sidebar.radio("測驗單元切換", ["📝 考試說明", "第一部分：單詞朗讀", "第二部分：簡答題", "第三部分：看圖說話"])
 
