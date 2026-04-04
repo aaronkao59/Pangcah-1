@@ -72,7 +72,7 @@ def main():
 
     st.sidebar.markdown("### <span style='color: #94a3b8;'>❖ sawm<span style='color: #ff4b4b;'>A</span>h 族語學院</span>", unsafe_allow_html=True)
     st.sidebar.title("🌊 阿美語初級認證")
-    app_mode = st.sidebar.radio("測驗單元切換", ["📝 考試說明", "第一部分：單詞朗讀", "第二部分：簡答題", "第三部分：看圖說話"])
+    app_mode = st.sidebar.radio("練習單元切換", ["📝 考試說明", "第一部分：單詞朗讀", "第二部分：簡答題", "第三部分：看圖說話"])
 
     if app_mode == "📝 考試說明":
         # 恢復完整的考試說明表格
@@ -159,8 +159,8 @@ def main():
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
             
 
-    elif app_mode == "第三部分：看圖說話":
-        st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (草稿已自動同步儲存)</h3></div>', unsafe_allow_html=True)
+   elif app_mode == "第三部分：看圖說話":
+        st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(草稿已自動同步儲存)</span></h3></div>', unsafe_allow_html=True)
         
         topic_list = list(oral_prompts.keys())
         
