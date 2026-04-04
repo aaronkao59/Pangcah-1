@@ -176,7 +176,7 @@ def main():
         else:
             prompt_text = selected_ui
 
-        st.markdown(f"#### 📌 當前主題：{prompt_text}")
+        st.markdown(f"####  當前主題：{prompt_text}")
         
         target_images = oral_prompts[prompt_text]
         cols = st.columns(2)
