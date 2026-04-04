@@ -158,7 +158,6 @@ def main():
         else:
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
             
-        st.progress(100, text="作答倒數：15 秒")
 
     elif app_mode == "第三部分：看圖說話":
         st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 (草稿已自動同步儲存)</h3></div>', unsafe_allow_html=True)
