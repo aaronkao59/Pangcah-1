@@ -147,7 +147,7 @@ def main():
             format_func=lambda x: f"第 {x} 題"
         )
         
-        st.markdown(f'#### 🔊 {current_set} - <span style="font-size: 16px; font-weight: normal; color: black;">第 {q_idx} 題</span>', unsafe_allow_html=True)
+        st.markdown(f'#### 🔊 {current_set} - <span style="font-size: 16px; font-weight: normal; color: red;">第 {q_idx} 題</span>', unsafe_allow_html=True)
         
         # 3. 音檔播放邏輯 (自動組合出例如 "3-2.mp3" 的檔名)
         audio_filename = f"{set_num}-{q_idx}.mp3"
