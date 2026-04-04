@@ -133,7 +133,7 @@ def main():
         else:
             current_set = selected_set_ui
 
-        st.markdown(f"####當前練習：{current_set}")
+        st.markdown(f"#### 當前練習：{current_set}")
         
         # 取得題組的數字 (例如從 "題組 3" 中萃取出 "3")
         set_num = current_set.split(" ")[1]
@@ -176,7 +176,7 @@ def main():
         else:
             prompt_text = selected_ui
 
-        st.markdown(f"####當前主題：{prompt_text}")
+        st.markdown(f"#### 當前主題：{prompt_text}")
         
         target_images = oral_prompts[prompt_text]
         cols = st.columns(2)
