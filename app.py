@@ -92,7 +92,7 @@ def main():
         st.table(df_info)
 
     elif app_mode == "第一部分：單詞朗讀":
-        st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 (每題 2 分，共 10 分)</h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 </h3></div>', unsafe_allow_html=True)
         if st.button("🔄 刷新考卷"): st.rerun()
         
         test_words = vocab_df.sample(n=min(5, len(vocab_df)))['word'].tolist()
@@ -115,9 +115,49 @@ def main():
                 </div>""", unsafe_allow_html=True)
 
     elif app_mode == "第二部分：簡答題":
-        st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 (每題 4 分，共 20 分)</h3></div>', unsafe_allow_html=True)
-        q_idx = st.select_slider("請選擇當前播放題號：", options=["2-1", "2-2", "2-3", "2-4", "2-5"])
-        st.write(f"#### 🔊 {q_idx} (聽...)")
+        st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 </h3></div>', unsafe_allow_html=True)
+        
+        # 1. 建立題組選單 (題組 1 ~ 題組 7)
+        qa_sets = [f"題組 {i}" for i in range(1, 8)]
+        
+        # 處理「隨機抽題組」的鎖定記憶機制
+        if 'current_qa_set' not in st.session_state:
+            st.session_state.current_qa_set = qa_sets[0]
+
+        selected_set_ui = st.selectbox("🎯 請選擇練習題組：", ["🎲 隨機抽題組"] + qa_sets)
+        
+        if selected_set_ui == "🎲 隨機抽題組":
+            if st.button("🎲 重新隨機抽題組"):
+                st.session_state.current_qa_set = random.choice(qa_sets)
+            current_set = st.session_state.current_qa_set
+        else:
+            current_set = selected_set_ui
+
+        st.markdown(f"#### 📌 當前練習：{current_set}")
+        
+        # 取得題組的數字 (例如從 "題組 3" 中萃取出 "3")
+        set_num = current_set.split(" ")[1]
+        
+        st.divider()
+        
+        # 2. 選擇該題組內的第幾題
+        q_idx = st.select_slider(
+            "請選擇當前播放題號：", 
+            options=[1, 2, 3, 4, 5], 
+            format_func=lambda x: f"第 {x} 題"
+        )
+        
+        st.write(f"#### 🔊 {current_set} - 第 {q_idx} 題")
+        
+        # 3. 音檔播放邏輯 (自動組合出例如 "3-2.mp3" 的檔名)
+        audio_filename = f"{set_num}-{q_idx}.mp3"
+        audio_path = os.path.join("audio", "qa", audio_filename)
+        
+        if os.path.exists(audio_path):
+            st.audio(audio_path, format="audio/mp3")
+        else:
+            st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
+            
         st.progress(100, text="作答倒數：15 秒")
 
     elif app_mode == "第三部分：看圖說話":
