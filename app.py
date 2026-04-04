@@ -159,7 +159,7 @@ def main():
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
             
 
-   elif app_mode == "第三部分：看圖說話":
+    elif app_mode == "第三部分：看圖說話":
         st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(草稿已自動同步儲存)</span></h3></div>', unsafe_allow_html=True)
         
         topic_list = list(oral_prompts.keys())
@@ -170,7 +170,7 @@ def main():
         selected_ui = st.selectbox("🎯 請選擇練習主題：", ["🎲 隨機抽題"] + topic_list)
         
         if selected_ui == "🎲 隨機抽題":
-            if st.button("🎲 重新隨機抽題"):
+        if st.button("🎲 重新隨機抽題"):
                 st.session_state.current_topic = random.choice(topic_list)
             prompt_text = st.session_state.current_topic
         else:
@@ -184,8 +184,8 @@ def main():
             with cols[i % 2]:
                 st.markdown(f'<div class="q-number">圖片 {label}</div>', unsafe_allow_html=True)
                 img_path = os.path.join("images", target_images[i])
-                if os.path.exists(img_path): st.image(img_path, use_container_width=True)
-                else: st.info(f"遺失: {target_images[i]}")
+        if os.path.exists(img_path): st.image(img_path, use_container_width=True)
+        else: st.info(f"遺失: {target_images[i]}")
 
         st.divider()
         
