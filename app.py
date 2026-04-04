@@ -170,7 +170,7 @@ def main():
         selected_ui = st.selectbox("🎯 請選擇練習主題：", ["🎲 隨機抽題"] + topic_list)
         
         if selected_ui == "🎲 隨機抽題":
-        if st.button("🎲 重新隨機抽題"):
+            if st.button("🎲 重新隨機抽題"):
                 st.session_state.current_topic = random.choice(topic_list)
             prompt_text = st.session_state.current_topic
         else:
