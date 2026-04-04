@@ -176,7 +176,7 @@ def main():
         else:
             prompt_text = selected_ui
 
-        st.markdown(f"#### 當前主題：{prompt_text}")
+        st.markdown(f"#### 📌 當前主題：{prompt_text}")
         
         target_images = oral_prompts[prompt_text]
         cols = st.columns(2)
@@ -184,8 +184,8 @@ def main():
             with cols[i % 2]:
                 st.markdown(f'<div class="q-number">圖片 {label}</div>', unsafe_allow_html=True)
                 img_path = os.path.join("images", target_images[i])
-        if os.path.exists(img_path): st.image(img_path, use_container_width=True)
-        else: st.info(f"遺失: {target_images[i]}")
+                if os.path.exists(img_path): st.image(img_path, use_container_width=True)
+                else: st.info(f"遺失: {target_images[i]}")
 
         st.divider()
         
