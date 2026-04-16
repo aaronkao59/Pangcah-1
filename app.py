@@ -110,7 +110,8 @@ def main():
                     f_size = "0.9rem"
                 
                 if w_str != "---":
-                    audio_path = os.path.join("audio", "word", f"{w_str}.mp3")
+                    # 👇 已經為您將這裡的路徑精準修改為 "words"
+                    audio_path = os.path.join("audio", "words", f"{w_str}.mp3")
                     
                     if os.path.exists(audio_path):
                         with open(audio_path, "rb") as f:
