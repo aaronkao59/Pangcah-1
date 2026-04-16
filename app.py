@@ -3,7 +3,7 @@ import pandas as pd
 import random
 import os
 import json
-import base64  # <--- 加入這一行，這是讓音檔隱藏播放的關鍵
+import base64
 
 # --- [元數據與效能設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
@@ -76,7 +76,6 @@ def main():
     app_mode = st.sidebar.radio("練習單元切換", ["📝 考試說明", "第一部分：單詞朗讀", "第二部分：簡答題", "第三部分：看圖說話"])
 
     if app_mode == "📝 考試說明":
-        # 恢復完整的考試說明表格
         st.markdown('<div class="exam-banner"><h3>📝 測驗指南</h3><p>考前必讀：[測驗項目]-[配分]-[合格標準]</p></div>', unsafe_allow_html=True)
         exam_info = {
             "項目": ["測驗項目與配分", "測驗時間", "範圍與參考教材", "合格標準", "測驗方式"],
@@ -92,7 +91,7 @@ def main():
         df_info.index = [""] * len(df_info) 
         st.table(df_info)
 
-elif app_mode == "第一部分：單詞朗讀":
+    elif app_mode == "第一部分：單詞朗讀":
         st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 </h3></div>', unsafe_allow_html=True)
         if st.button("🔄 題目刷新"): st.rerun()
         
@@ -109,30 +108,22 @@ elif app_mode == "第一部分：單詞朗讀":
                 else:
                     f_size = "0.9rem"
                 
-                # --- 🔊 核心魔法：將音檔隱藏並綁定點擊事件 ---
+                # --- 🔊 隱藏音檔播放核心 ---
                 audio_html = ""
                 click_action = ""
                 cursor_style = ""
                 
                 if w_str != "---":
-                    # 抓取對應的音檔路徑 (例如 audio/words/mali.mp3)
                     audio_path = os.path.join("audio", "words", f"{w_str}.mp3")
-                    
                     if os.path.exists(audio_path):
-                        # 1. 讀取音檔並轉換為 base64 編碼
                         with open(audio_path, "rb") as f:
                             audio_bytes = f.read()
                         audio_base64 = base64.b64encode(audio_bytes).decode()
-                        
-                        # 2. 建立隱藏的 HTML5 播放器，並給它專屬 ID
                         audio_id = f"audio_word_{i}"
                         audio_html = f'<audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>'
-                        
-                        # 3. 設定卡片的點擊事件 (點擊時觸發播放) 與滑鼠游標樣式 (變成手指)
                         click_action = f'onclick="document.getElementById(\'{audio_id}\').play()"'
                         cursor_style = "cursor: pointer;"
                 
-                # 渲染卡片：外觀完全不變，但注入了隱藏播放器與點擊功能
                 st.markdown(f"""
                 {audio_html}
                 <div {click_action} style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%; {cursor_style}">
@@ -144,10 +135,8 @@ elif app_mode == "第一部分：單詞朗讀":
     elif app_mode == "第二部分：簡答題":
         st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 </h3></div>', unsafe_allow_html=True)
         
-        # 1. 建立題組選單 (題組 1 ~ 題組 7)
         qa_sets = [f"題組 {i}" for i in range(1, 8)]
         
-        # 處理「隨機抽題組」的鎖定記憶機制
         if 'current_qa_set' not in st.session_state:
             st.session_state.current_qa_set = qa_sets[0]
 
@@ -161,34 +150,25 @@ elif app_mode == "第一部分：單詞朗讀":
             current_set = selected_set_ui
 
         st.markdown(f"#### 當前練習：{current_set}")
-        
-        # 取得題組的數字 (例如從 "題組 3" 中萃取出 "3")
         set_num = current_set.split(" ")[1]
-        
         st.divider()
         
-        # 2. 選擇該題組內的第幾題 (直觀按鈕式設計)
+        # --- 🔊 直觀按鈕式設計 ---
         st.markdown("<p style='font-size:14px; color:#64748b; font-weight:bold; margin-bottom:10px;'>請選擇當前播放題號：</p>", unsafe_allow_html=True)
         
-        # 運用 Session State 記憶目前點選的題號 (預設為 1)
         if 'current_q_idx' not in st.session_state:
             st.session_state.current_q_idx = 1
 
-        # 建立 5 個並排的按鈕
         btn_cols = st.columns(5)
         for i in range(1, 6):
-            # 當前選中的題號使用 "primary" (主題色高亮)，其他的用 "secondary" (預設灰色)
             btn_type = "primary" if st.session_state.current_q_idx == i else "secondary"
-            
             if btn_cols[i-1].button(f"第 {i} 題", key=f"q_btn_{i}", type=btn_type, use_container_width=True):
                 st.session_state.current_q_idx = i
-                st.rerun() # 點擊後立即刷新畫面，更新按鈕顏色與音檔
+                st.rerun()
 
         q_idx = st.session_state.current_q_idx
-        
         st.markdown(f'#### 🔊 {current_set} - <span style="font-size: 16px; font-weight: normal; color: red;">第 {q_idx} 題</span>', unsafe_allow_html=True)
         
-        # 3. 音檔播放邏輯 (自動組合出例如 "3-2.mp3" 的檔名)
         audio_filename = f"{set_num}-{q_idx}.mp3"
         audio_path = os.path.join("audio", "qa", audio_filename)
         
@@ -196,7 +176,6 @@ elif app_mode == "第一部分：單詞朗讀":
             st.audio(audio_path, format="audio/mp3")
         else:
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
-            
 
     elif app_mode == "第三部分：看圖說話":
         st.markdown('<div class="exam-banner"><h3>第三部分：看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(草稿已自動同步儲存)</span></h3></div>', unsafe_allow_html=True)
@@ -217,6 +196,24 @@ elif app_mode == "第一部分：單詞朗讀":
 
         st.markdown(f"####  當前主題：{prompt_text}")
         
+        # --- 🔊 看圖說話音檔對應 ---
+        audio_mapping = {
+            "我喜歡的活動": "activity.mp3", "拜訪爺爺的一天": "grandpa.mp3",
+            "我和朋友玩耍": "friends.mp3", "我的生活作息": "routine.mp3",
+            "我喜歡的天氣": "weather.mp3", "我喜歡吃的東西": "food.mp3",
+            "伴我讀書的用品": "study.mp3", "我喜歡的職業": "job.mp3",
+            "我喜歡的活動2": "activity2.mp3", "我的生活作息2": "routine2.mp3",
+            "我喜歡的動物": "animal.mp3"
+        }
+        
+        target_audio = audio_mapping.get(prompt_text)
+        if target_audio:
+            audio_path = os.path.join("audio", "prompts", target_audio)
+            if os.path.exists(audio_path):
+                st.audio(audio_path, format="audio/mp3")
+            else:
+                st.caption(f"🔇 此題尚無語音提示 ({target_audio})")
+
         target_images = oral_prompts[prompt_text]
         cols = st.columns(2)
         for i, label in enumerate(['A','B','C','D']):
@@ -247,8 +244,8 @@ if __name__ == "__main__":
     main()
 
 # ==========================================
-# 6. 頁尾資訊 (可選)
+# 頁尾資訊
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.1(New UI Upgraded)")
+st.sidebar.caption("v1.2 (Interactive Audio & UI Upgraded)")
