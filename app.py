@@ -3,6 +3,7 @@ import pandas as pd
 import random
 import os
 import json
+import base64  # <--- 加入這一行，這是讓音檔隱藏播放的關鍵
 
 # --- [元數據與效能設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
@@ -91,14 +92,13 @@ def main():
         df_info.index = [""] * len(df_info) 
         st.table(df_info)
 
-    elif app_mode == "第一部分：單詞朗讀":
+elif app_mode == "第一部分：單詞朗讀":
         st.markdown('<div class="exam-banner"><h3>第一部分：單詞朗讀 </h3></div>', unsafe_allow_html=True)
         if st.button("🔄 題目刷新"): st.rerun()
         
         test_words = vocab_df.sample(n=min(5, len(vocab_df)))['word'].tolist()
         cols = st.columns(5)
         
-        # 維持動態字體縮放，確保單字不會被折行
         for i, word in enumerate(test_words + ["---"]*(5-len(test_words))):
             with cols[i]:
                 w_str = str(word)
@@ -108,11 +108,38 @@ def main():
                     f_size = "1.1rem"
                 else:
                     f_size = "0.9rem"
+                
+                # --- 🔊 核心魔法：將音檔隱藏並綁定點擊事件 ---
+                audio_html = ""
+                click_action = ""
+                cursor_style = ""
+                
+                if w_str != "---":
+                    # 抓取對應的音檔路徑 (例如 audio/words/mali.mp3)
+                    audio_path = os.path.join("audio", "words", f"{w_str}.mp3")
                     
-                st.markdown(f"""<div style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%;">
+                    if os.path.exists(audio_path):
+                        # 1. 讀取音檔並轉換為 base64 編碼
+                        with open(audio_path, "rb") as f:
+                            audio_bytes = f.read()
+                        audio_base64 = base64.b64encode(audio_bytes).decode()
+                        
+                        # 2. 建立隱藏的 HTML5 播放器，並給它專屬 ID
+                        audio_id = f"audio_word_{i}"
+                        audio_html = f'<audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>'
+                        
+                        # 3. 設定卡片的點擊事件 (點擊時觸發播放) 與滑鼠游標樣式 (變成手指)
+                        click_action = f'onclick="document.getElementById(\'{audio_id}\').play()"'
+                        cursor_style = "cursor: pointer;"
+                
+                # 渲染卡片：外觀完全不變，但注入了隱藏播放器與點擊功能
+                st.markdown(f"""
+                {audio_html}
+                <div {click_action} style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%; {cursor_style}">
                     <div class="q-number">1-{i+1}.</div>
                     <div style="color: #1e3a8a; font-weight: bold; font-family: 'Courier New', monospace; font-size: {f_size}; white-space: nowrap;">{w_str}</div>
-                </div>""", unsafe_allow_html=True)
+                </div>
+                """, unsafe_allow_html=True)
 
     elif app_mode == "第二部分：簡答題":
         st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 </h3></div>', unsafe_allow_html=True)
