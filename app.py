@@ -140,12 +140,24 @@ def main():
         
         st.divider()
         
-        # 2. 選擇該題組內的第幾題
-        q_idx = st.select_slider(
-            "請選擇當前播放題號：", 
-            options=[1, 2, 3, 4, 5], 
-            format_func=lambda x: f"第 {x} 題"
-        )
+        # 2. 選擇該題組內的第幾題 (直觀按鈕式設計)
+        st.markdown("<p style='font-size:14px; color:#64748b; font-weight:bold; margin-bottom:10px;'>請選擇當前播放題號：</p>", unsafe_allow_html=True)
+        
+        # 運用 Session State 記憶目前點選的題號 (預設為 1)
+        if 'current_q_idx' not in st.session_state:
+            st.session_state.current_q_idx = 1
+
+        # 建立 5 個並排的按鈕
+        btn_cols = st.columns(5)
+        for i in range(1, 6):
+            # 當前選中的題號使用 "primary" (主題色高亮)，其他的用 "secondary" (預設灰色)
+            btn_type = "primary" if st.session_state.current_q_idx == i else "secondary"
+            
+            if btn_cols[i-1].button(f"第 {i} 題", key=f"q_btn_{i}", type=btn_type, use_container_width=True):
+                st.session_state.current_q_idx = i
+                st.rerun() # 點擊後立即刷新畫面，更新按鈕顏色與音檔
+
+        q_idx = st.session_state.current_q_idx
         
         st.markdown(f'#### 🔊 {current_set} - <span style="font-size: 16px; font-weight: normal; color: red;">第 {q_idx} 題</span>', unsafe_allow_html=True)
         
