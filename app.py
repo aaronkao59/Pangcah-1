@@ -4,6 +4,7 @@ import random
 import os
 import json
 import base64
+import streamlit.components.v1 as components  # <--- 新增這一行！這是沙盒魔法的關鍵
 
 # --- [元數據與效能設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
@@ -108,29 +109,67 @@ def main():
                 else:
                     f_size = "0.9rem"
                 
-                # --- 🔊 隱藏音檔播放核心 ---
-                audio_html = ""
-                click_action = ""
-                cursor_style = ""
-                
                 if w_str != "---":
-                    audio_path = os.path.join("audio", "words", f"{w_str}.mp3")
+                    audio_path = os.path.join("audio", "word", f"{w_str}.mp3")
+                    
                     if os.path.exists(audio_path):
                         with open(audio_path, "rb") as f:
                             audio_bytes = f.read()
                         audio_base64 = base64.b64encode(audio_bytes).decode()
-                        audio_id = f"audio_word_{i}"
-                        audio_html = f'<audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>'
-                        click_action = f'onclick="document.getElementById(\'{audio_id}\').play()"'
-                        cursor_style = "cursor: pointer;"
-                
-                st.markdown(f"""
-                {audio_html}
-                <div {click_action} style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%; {cursor_style}">
-                    <div class="q-number">1-{i+1}.</div>
-                    <div style="color: #1e3a8a; font-weight: bold; font-family: 'Courier New', monospace; font-size: {f_size}; white-space: nowrap;">{w_str}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                        
+                        # --- 🔊 終極解法：使用 Html 沙盒組件保護 JavaScript ---
+                        html_code = f"""
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                        <style>
+                            body {{ margin: 0; padding: 5px; font-family: sans-serif; }}
+                            .vocab-card {{
+                                text-align: center;
+                                padding: 20px 5px;
+                                border: 2px solid #e2e8f0;
+                                border-radius: 12px;
+                                background: white;
+                                cursor: pointer;
+                                transition: all 0.2s ease-in-out;
+                            }}
+                            .vocab-card:hover {{
+                                border-color: #ff4b4b;
+                                box-shadow: 0 4px 12px rgba(255, 75, 75, 0.15);
+                                transform: translateY(-3px);
+                            }}
+                            .q-number {{ color: #64748b; font-size: 14px; margin-bottom: 5px; font-weight: bold; }}
+                            .vocab-word {{ color: #1e3a8a; font-weight: bold; font-family: 'Courier New', monospace; font-size: {f_size}; white-space: nowrap; }}
+                        </style>
+                        </head>
+                        <body>
+                            <audio id="audio_player" src="data:audio/mp3;base64,{audio_base64}"></audio>
+                            <div class="vocab-card" onclick="document.getElementById('audio_player').play()">
+                                <div class="q-number">1-{i+1}.</div>
+                                <div class="vocab-word">{w_str}</div>
+                            </div>
+                        </body>
+                        </html>
+                        """
+                        # 渲染帶有互動功能的沙盒卡片 (完美隱藏播放器)
+                        components.html(html_code, height=130, scrolling=False)
+                    else:
+                        # 找不到音檔時的預設卡片 (防呆提示)
+                        st.markdown(f"""
+                        <div style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%;">
+                            <div class="q-number">1-{i+1}.</div>
+                            <div style="color: #1e3a8a; font-weight: bold; font-family: 'Courier New', monospace; font-size: {f_size}; white-space: nowrap;">{w_str}</div>
+                            <div style="color: #ccc; font-size: 12px; margin-top: 8px;">🔇 尚無音檔</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    # 數量不足時的空白卡片
+                    st.markdown(f"""
+                    <div style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%;">
+                        <div class="q-number">1-{i+1}.</div>
+                        <div style="color: #1e3a8a; font-weight: bold; font-family: 'Courier New', monospace; font-size: {f_size}; white-space: nowrap;">---</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
     elif app_mode == "第二部分：簡答題":
         st.markdown('<div class="exam-banner"><h3>第二部分：簡答題 </h3></div>', unsafe_allow_html=True)
