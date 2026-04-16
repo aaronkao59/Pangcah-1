@@ -76,7 +76,7 @@ def main():
 
     if app_mode == "📝 考試說明":
         # 恢復完整的考試說明表格
-        st.markdown('<div class="exam-banner"><h3>📝 測驗指南</h3><p>考前必讀：[測驗項目][配分][合格標準]</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>📝 測驗指南</h3><p>考前必讀：[測驗項目]-[配分]-[合格標準]</p></div>', unsafe_allow_html=True)
         exam_info = {
             "項目": ["測驗項目與配分", "測驗時間", "範圍與參考教材", "合格標準", "測驗方式"],
             "內容說明": [
