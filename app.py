@@ -172,7 +172,7 @@ def main():
                     </div>
                     """, unsafe_allow_html=True)
 
-    elif app_mode == "🗣️ 簡答題":
+    elif app_mode == "💬 簡答題":
         st.markdown('<div class="exam-banner"><h3>簡答題 </h3></div>', unsafe_allow_html=True)
         
         qa_sets = [f"題組 {i}" for i in range(1, 8)]
