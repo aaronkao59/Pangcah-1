@@ -218,7 +218,7 @@ def main():
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
 
     elif app_mode == "🖼️ 看圖說話":
-        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(草稿已自動同步儲存)</span></h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(草稿自動儲存)</span></h3></div>', unsafe_allow_html=True)
         
         topic_list = list(oral_prompts.keys())
         
