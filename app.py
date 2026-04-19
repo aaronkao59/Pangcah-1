@@ -74,7 +74,7 @@ def main():
 
     st.sidebar.markdown("### <span style='color: #94a3b8;'>❖ sawm<span style='color: #ff4b4b;'>A</span>h 族語學院</span>", unsafe_allow_html=True)
     st.sidebar.title("🌊 阿美語初級認證")
-    app_mode = st.sidebar.radio("練習單元切換", ["📝 考試說明", "單詞朗讀", "簡答題", "看圖說話"])
+    app_mode = st.sidebar.radio("練習單元切換", ["📝 考試說明", "🗣️ 單詞朗讀", "💬 簡答題", "🖼️ 看圖說話"])
 
     if app_mode == "📝 考試說明":
         st.markdown('<div class="exam-banner"><h3>📝 測驗指南</h3><p>考前必讀：[測驗項目]-[配分]-[合格標準]</p></div>', unsafe_allow_html=True)
@@ -92,7 +92,7 @@ def main():
         df_info.index = [""] * len(df_info) 
         st.table(df_info)
 
-    elif app_mode == "單詞朗讀":
+    elif app_mode == "🗣️ 單詞朗讀":
         st.markdown('<div class="exam-banner"><h3>單詞朗讀 </h3></div>', unsafe_allow_html=True)
         if st.button("🔄 題目刷新"): st.rerun()
         
@@ -172,7 +172,7 @@ def main():
                     </div>
                     """, unsafe_allow_html=True)
 
-    elif app_mode == "簡答題":
+    elif app_mode == "🗣️ 簡答題":
         st.markdown('<div class="exam-banner"><h3>簡答題 </h3></div>', unsafe_allow_html=True)
         
         qa_sets = [f"題組 {i}" for i in range(1, 8)]
@@ -217,7 +217,7 @@ def main():
         else:
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
 
-    elif app_mode == "看圖說話":
+    elif app_mode == "🖼️ 看圖說話":
         st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(草稿已自動同步儲存)</span></h3></div>', unsafe_allow_html=True)
         
         topic_list = list(oral_prompts.keys())
