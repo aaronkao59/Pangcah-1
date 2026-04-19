@@ -74,14 +74,14 @@ def main():
 
     st.sidebar.markdown("### <span style='color: #94a3b8;'>❖ sawm<span style='color: #ff4b4b;'>A</span>h 族語學院</span>", unsafe_allow_html=True)
     st.sidebar.title("🌊 阿美語初級認證")
-    app_mode = st.sidebar.radio("練習單元切換", ["📝 考試說明", "🗣️ 單詞朗讀", "💬 簡答題", "🖼️ 看圖說話"])
+    app_mode = st.sidebar.radio("練習單元切換", ["📝 考試說明", "🗣️ 單詞朗讀", "💬 簡單問答", "🖼️ 看圖說話"])
 
     if app_mode == "📝 考試說明":
         st.markdown('<div class="exam-banner"><h3>📝 測驗指南</h3><p>考前必讀：[測驗項目]-[配分]-[合格標準]</p></div>', unsafe_allow_html=True)
         exam_info = {
             "項目": ["測驗項目與配分", "測驗時間", "範圍與參考教材", "合格標準", "測驗方式"],
             "內容說明": [
-                "1. 口說測驗 (佔40分)：單詞朗讀 (10%)、簡答題 (20%)、看圖說話 (10%)\n2. 聽力測驗 (佔60分)：是非題、選擇題、配合題",
+                "1. 口說測驗 (佔40分)：單詞朗讀 (10%)、簡單問答 (20%)、看圖說話 (10%)\n2. 聽力測驗 (佔60分)：是非題、選擇題、配合題",
                 "口說測驗：約 5分鐘 / 聽力測驗：約 20分鐘",
                 "1. 九階教材（第 1 至 3 階）\n2. 國中版句型篇\n3. 初級教材 — 生活會話篇\n4. 海岸阿美族語學習詞表",
                 "1. 總分須達 60分(含)以上，\n2. 且必須「同時」符合：聽力達 45分，口說達 15分",
@@ -172,8 +172,8 @@ def main():
                     </div>
                     """, unsafe_allow_html=True)
 
-    elif app_mode == "💬 簡答題":
-        st.markdown('<div class="exam-banner"><h3>簡答題 </h3></div>', unsafe_allow_html=True)
+    elif app_mode == "💬 簡單問答":
+        st.markdown('<div class="exam-banner"><h3>簡單問答 </h3></div>', unsafe_allow_html=True)
         
         qa_sets = [f"題組 {i}" for i in range(1, 8)]
         
