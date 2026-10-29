@@ -4,31 +4,10 @@ import random
 import os
 import json
 import base64
-import streamlit.components.v1 as components  # <--- 新增這一行！這是沙盒魔法的關鍵
+import streamlit.components.v1 as components  # <--- 沙盒魔法的關鍵
 
 # --- [元數據與效能設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
-
-# --- [新增：草稿永久化管理模組] ---
-DRAFTS_FILE = "data/user_drafts.json"
-
-def load_all_drafts():
-    """從硬碟讀取所有已存草稿"""
-    if os.path.exists(DRAFTS_FILE):
-        try:
-            with open(DRAFTS_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except:
-            return {}
-    return {}
-
-def save_single_draft(topic, content):
-    """將單一題目的草稿寫入硬碟"""
-    drafts = load_all_drafts()
-    drafts[topic] = content
-    os.makedirs("data", exist_ok=True)
-    with open(DRAFTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(drafts, f, ensure_ascii=False, indent=2)
 
 # --- [模組 A] 極速資料載入引擎 ---
 @st.cache_data
@@ -70,7 +49,6 @@ st.markdown("""
 
 def main():
     vocab_df, oral_prompts = load_static_data()
-    all_drafts = load_all_drafts() # 載入所有歷史草稿
 
     st.sidebar.markdown("### <span style='color: #94a3b8;'>❖ sawm<span style='color: #ff4b4b;'>A</span>h 族語學院</span>", unsafe_allow_html=True)
     st.sidebar.title("🌊 阿美語初級認證")
@@ -110,7 +88,6 @@ def main():
                     f_size = "0.9rem"
                 
                 if w_str != "---":
-                    # 👇 已經為您將這裡的路徑精準修改為 "words"
                     audio_path = os.path.join("audio", "words", f"{w_str}.mp3")
                     
                     if os.path.exists(audio_path):
@@ -152,10 +129,8 @@ def main():
                         </body>
                         </html>
                         """
-                        # 渲染帶有互動功能的沙盒卡片 (完美隱藏播放器)
                         components.html(html_code, height=130, scrolling=False)
                     else:
-                        # 找不到音檔時的預設卡片 (防呆提示)
                         st.markdown(f"""
                         <div style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%;">
                             <div class="q-number">1-{i+1}.</div>
@@ -164,7 +139,6 @@ def main():
                         </div>
                         """, unsafe_allow_html=True)
                 else:
-                    # 數量不足時的空白卡片
                     st.markdown(f"""
                     <div style="text-align: center; padding: 20px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; height: 100%;">
                         <div class="q-number">1-{i+1}.</div>
@@ -193,7 +167,6 @@ def main():
         set_num = current_set.split(" ")[1]
         st.divider()
         
-        # --- 🔊 直觀按鈕式設計 ---
         st.markdown("<p style='font-size:14px; color:#64748b; font-weight:bold; margin-bottom:10px;'>請選擇當前播放題號：</p>", unsafe_allow_html=True)
         
         if 'current_q_idx' not in st.session_state:
@@ -218,7 +191,7 @@ def main():
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
 
     elif app_mode == "🖼️ 看圖說話":
-        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(草稿自動儲存)</span></h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附標準參考答案)</span></h3></div>', unsafe_allow_html=True)
         
         topic_list = list(oral_prompts.keys())
         
@@ -236,7 +209,6 @@ def main():
 
         st.markdown(f"####  當前主題：{prompt_text}")
         
-        # --- 🔊 看圖說話音檔對應 ---
         audio_mapping = {
             "我喜歡的活動": "activity.mp3", "拜訪爺爺的一天": "grandpa.mp3",
             "我和朋友玩耍": "friends.mp3", "我的生活作息": "routine.mp3",
@@ -265,20 +237,38 @@ def main():
 
         st.divider()
         
-        # 永久化草稿區
-        existing_draft = all_drafts.get(prompt_text, "")
-        
-        draft_input = st.text_area(
-            f"✍️ 【{prompt_text}】的專屬草稿（系統會自動儲存）：",
-            value=existing_draft,
-            height=200,
-            key=f"draft_{prompt_text}",
-            help="此處輸入的內容會自動存檔，下次選到同一題時會自動載入。"
-        )
+        # --- [資料層] 11題看圖說話的固定參考答案與音檔對應表 ---
+        # 建議將音檔統一放置於 audio/reference/ 資料夾中
+        reference_data = {
+            "我喜歡的活動": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_activity.mp3"},
+            "拜訪爺爺的一天": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_grandpa.mp3"},
+            "我和朋友玩耍": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_friends.mp3"},
+            "我的生活作息": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_routine.mp3"},
+            "我喜歡的天氣": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_weather.mp3"},
+            "我喜歡吃的東西": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_food.mp3"},
+            "伴我讀書的用品": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_study.mp3"},
+            "我喜歡的職業": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_job.mp3"},
+            "我喜歡的活動2": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_activity2.mp3"},
+            "我的生活作息2": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_routine2.mp3"},
+            "我喜歡的動物": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_animal.mp3"}
+        }
 
-        if draft_input != existing_draft:
-            save_single_draft(prompt_text, draft_input)
-            st.toast(f"✅ {prompt_text} 草稿已更新", icon='💾')
+        # --- [UIUX層] 顯示標準參考答案與語音示範 ---
+        st.markdown('<div class="exam-banner" style="background-color: #f0fdf4; border-left-color: #16a34a;"><h3>💡 標準參考答案</h3></div>', unsafe_allow_html=True)
+        
+        ref_info = reference_data.get(prompt_text)
+        if ref_info:
+            # 顯示阿美語標準文字 (可根據 10-5 詞彙規範進行精確校準)
+            st.info(f"**📖 參考句型：**\n\n{ref_info['text']}")
+            
+            # 載入並顯示標準參考音檔
+            ref_audio_path = os.path.join("audio", "reference", ref_info["audio"])
+            if os.path.exists(ref_audio_path):
+                st.audio(ref_audio_path, format="audio/mp3")
+            else:
+                st.caption(f"🔇 尚未配置參考音檔 (預期路徑: {ref_audio_path})")
+        else:
+            st.warning("⚠️ 系統尚未建檔此題的參考資料")
 
 if __name__ == "__main__":
     main()
@@ -288,4 +278,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.2 (Interactive Audio & UI Upgraded)")
+st.sidebar.caption("v1.3 (Fixed Reference Integration)")
