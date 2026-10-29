@@ -191,10 +191,10 @@ def main():
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
 
     elif app_mode == "🖼️ 看圖說話":
-        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案)</span></h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案/要熟記每張圖的說法)</span></h3></div>', unsafe_allow_html=True)
         
         # --- [新增：萬用前言與結語展開區塊 (精準拆分音檔)] ---
-        with st.expander("🗣️ （前言）"):
+        with st.expander("🗣️ （前言）三選一"):
             intro_phrases = [
                 ("1. (01 Itini tona coka, mahaenay ko harateng no mako.)", "intro01.mp3"),
                 ("2. (02 Itini tona coka, ira ko cecay harateng no mako.)", "intro02.mp3"),
@@ -208,7 +208,7 @@ def main():
                 else:
                     st.caption(f"🔇 尚未配置音檔 ({fpath})")
 
-        with st.expander("🗣️ （結語）"):
+        with st.expander("🗣️ （結語）三選一"):
             outro_phrases = [
                 ("1. (01 O tada harateng no mako koni.)", "outro01.mp3"),
                 ("2. (02 Mahaenay ko harateng no mako.)", "outro02.mp3"),
