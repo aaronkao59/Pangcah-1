@@ -193,6 +193,33 @@ def main():
     elif app_mode == "🖼️ 看圖說話":
         st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案)</span></h3></div>', unsafe_allow_html=True)
         
+        # --- [新增：萬用前言與結語展開區塊] ---
+        with st.expander("🗣️ （前言）"):
+            st.markdown("""
+            1. **(預留前言族語短語 1)**
+            2. **(預留前言族語短語 2)**
+            3. **(預留前言族語短語 3)**
+            """)
+            intro_audio = os.path.join("audio", "reference", "intro.mp3")
+            if os.path.exists(intro_audio):
+                st.audio(intro_audio, format="audio/mp3")
+            else:
+                st.caption("🔇 尚未配置前言音檔 (預期路徑: audio/reference/intro.mp3)")
+
+        with st.expander("🗣️ （結語）"):
+            st.markdown("""
+            1. **(預留結語族語短語 1)**
+            2. **(預留結語族語短語 2)**
+            3. **(預留結語族語短語 3)**
+            """)
+            outro_audio = os.path.join("audio", "reference", "outro.mp3")
+            if os.path.exists(outro_audio):
+                st.audio(outro_audio, format="audio/mp3")
+            else:
+                st.caption("🔇 尚未配置結語音檔 (預期路徑: audio/reference/outro.mp3)")
+        
+        st.write("") # 增加微小間距區隔
+        
         topic_list = list(oral_prompts.keys())
         
         if 'current_topic' not in st.session_state:
