@@ -193,30 +193,34 @@ def main():
     elif app_mode == "🖼️ 看圖說話":
         st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案)</span></h3></div>', unsafe_allow_html=True)
         
-        # --- [新增：萬用前言與結語展開區塊] ---
+        # --- [新增：萬用前言與結語展開區塊 (精準拆分音檔)] ---
         with st.expander("🗣️ （前言）"):
-            st.markdown("""
-            1. **(01 Itini tona coka, mahaenay ko harateng no mako.)**
-            2. **(02 Itini tona coka, ira ko cecay harateng no mako.)**
-            3. **(03 O no mako a hareteng itini tona coka i.)**
-            """)
-            intro_audio = os.path.join("audio", "reference", "intro.mp3")
-            if os.path.exists(intro_audio):
-                st.audio(intro_audio, format="audio/mp3")
-            else:
-                st.caption("🔇 尚未配置前言音檔 (預期路徑: audio/reference/intro.mp3)")
+            intro_phrases = [
+                ("1. (01 Itini tona coka, mahaenay ko harateng no mako.)", "intro01.mp3"),
+                ("2. (02 Itini tona coka, ira ko cecay harateng no mako.)", "intro02.mp3"),
+                ("3. (03 O no mako a hareteng itini tona coka i.)", "intro03.mp3")
+            ]
+            for text, fname in intro_phrases:
+                st.markdown(f"**{text}**")
+                fpath = os.path.join("audio", "reference", fname)
+                if os.path.exists(fpath):
+                    st.audio(fpath, format="audio/mp3")
+                else:
+                    st.caption(f"🔇 尚未配置音檔 ({fpath})")
 
         with st.expander("🗣️ （結語）"):
-            st.markdown("""
-            1. **(01 O tada harateng no mako koni.)**
-            2. **(02 Mahaenay ko harateng no mako.)**
-            3. **(03 Hatini aca ko harateng no mako.)**
-            """)
-            outro_audio = os.path.join("audio", "reference", "outro.mp3")
-            if os.path.exists(outro_audio):
-                st.audio(outro_audio, format="audio/mp3")
-            else:
-                st.caption("🔇 尚未配置結語音檔 (預期路徑: audio/reference/outro.mp3)")
+            outro_phrases = [
+                ("1. (01 O tada harateng no mako koni.)", "end01.mp3"),
+                ("2. (02 Mahaenay ko harateng no mako.)", "end02.mp3"),
+                ("3. (03 Hatini aca ko harateng no mako.)", "end03.mp3")
+            ]
+            for text, fname in outro_phrases:
+                st.markdown(f"**{text}**")
+                fpath = os.path.join("audio", "reference", fname)
+                if os.path.exists(fpath):
+                    st.audio(fpath, format="audio/mp3")
+                else:
+                    st.caption(f"🔇 尚未配置音檔 ({fpath})")
         
         st.write("") # 增加微小間距區隔
         
@@ -305,4 +309,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.3 (Fixed Reference Integration)")
+st.sidebar.caption("v1.4 (Atomic Audio Reference Integration)")
