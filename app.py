@@ -52,7 +52,7 @@ def main():
 
     st.sidebar.markdown("### <span style='color: #94a3b8;'>❖ sawm<span style='color: #ff4b4b;'>A</span>h 族語學院</span>", unsafe_allow_html=True)
     st.sidebar.title("🌊 海岸阿美初級認證")
-    app_mode = st.sidebar.radio("口說練習單元選擇", ["📝 考試說明", "🗣️ 單詞朗讀", "💬 簡單問答", "🖼️ 看圖說話"])
+    app_mode = st.sidebar.radio("〖口說練習-單元選擇〗", ["📝 考試說明", "🗣️ 單詞朗讀", "💬 簡單問答", "🖼️ 看圖說話"])
 
     if app_mode == "📝 考試說明":
         st.markdown('<div class="exam-banner"><h3>📝 測驗指南</h3><p>考前必讀：[測驗項目]-[配分]-[合格標準]</p></div>', unsafe_allow_html=True)
