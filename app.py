@@ -191,7 +191,7 @@ def main():
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
 
     elif app_mode == "🖼️ 看圖說話":
-        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附標準參考答案)</span></h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案)</span></h3></div>', unsafe_allow_html=True)
         
         topic_list = list(oral_prompts.keys())
         
@@ -254,7 +254,7 @@ def main():
         }
 
         # --- [UIUX層] 顯示標準參考答案與語音示範 ---
-        st.markdown('<div class="exam-banner" style="background-color: #f0fdf4; border-left-color: #16a34a;"><h3>💡 標準參考答案</h3></div>', unsafe_allow_html=True)
+        st.markdown('<div class="exam-banner" style="background-color: #f0fdf4; border-left-color: #16a34a;"><h3>💡 參考答案</h3></div>', unsafe_allow_html=True)
         
         ref_info = reference_data.get(prompt_text)
         if ref_info:
