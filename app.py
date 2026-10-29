@@ -239,21 +239,6 @@ def main():
             prompt_text = selected_ui
 
         st.markdown(f"####  當前主題：{prompt_text}")
-        
-        audio_mapping = {
-            "我喜歡的活動": "activity.mp3", "拜訪爺爺的一天": "grandpa.mp3",
-            "我和朋友玩耍": "friends.mp3", "我的生活作息": "routine.mp3",
-            "我喜歡的天氣": "weather.mp3", "我喜歡吃的東西": "food.mp3",
-            "伴我讀書的用品": "study.mp3", "我喜歡的職業": "job.mp3",
-            "我喜歡的活動2": "activity2.mp3", "我的生活作息2": "routine2.mp3",
-            "我喜歡的動物": "animal.mp3"
-        }
-        
-        target_audio = audio_mapping.get(prompt_text)
-        if target_audio:
-            audio_path = os.path.join("audio", "prompts", target_audio)
-            if os.path.exists(audio_path):
-                st.audio(audio_path, format="audio/mp3")
 
         target_images = oral_prompts[prompt_text]
         cols = st.columns(2)
@@ -267,7 +252,6 @@ def main():
         st.divider()
         
         # --- [資料層] 11題看圖說話的固定參考答案與音檔對應表 ---
-        # 建議將音檔統一放置於 audio/reference/ 資料夾中
         reference_data = {
             "我喜歡的活動": {"text": "o kaolahan ako a demak, Maolah kako a masakero, Maolah kako a talalotok, Maolah kako a misa'osi, Maolah kako a micoka.", "audio": "ref_activity.mp3"},
             "拜訪爺爺的一天": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_grandpa.mp3"},
@@ -287,11 +271,15 @@ def main():
         
         ref_info = reference_data.get(prompt_text)
         if ref_info:
+            # --- 處理文字斷行：遇逗號換行 ---
+            # 將句中的 ", " 替換為 ", <br>" 以達成斷行效果
+            formatted_text = ref_info['text'].replace(", ", ",<br>")
+            
             # --- 調整字體大小與美化參考句型 ---
             st.markdown(f"""
             <div style="background-color: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
                 <div style="font-weight: bold; color: #0d47a1; font-size: 1.2rem; margin-bottom: 15px;">📖 參考句型：</div>
-                <div style="font-size: 1.4rem; color: #1565c0; line-height: 1.6;">{ref_info['text']}</div>
+                <div style="font-size: 1.4rem; color: #1565c0; line-height: 1.6;">{formatted_text}</div>
             </div>
             """, unsafe_allow_html=True)
             
@@ -314,4 +302,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.6 (Clean UI & Audio Optimization)")
+st.sidebar.caption("v1.7 (Clean UI & Comma Line-Break Optimization)")
