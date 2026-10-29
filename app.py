@@ -241,12 +241,12 @@ def main():
         st.markdown(f"####  當前主題：{prompt_text}")
         
         audio_mapping = {
-            "我喜歡的活動": "ref_activity.mp3", "拜訪爺爺的一天": "ref_grandpa.mp3",
-            "我和朋友玩耍": "ref_friends.mp3", "我的生活作息": "ref_routine.mp3",
-            "我喜歡的天氣": "ref_weather.mp3", "我喜歡吃的東西": "ref_food.mp3",
-            "伴我讀書的用品": "ref_study.mp3", "我喜歡的職業": "ref_job.mp3",
-            "我喜歡的活動2": "ref_activity2.mp3", "我的生活作息2": "ref_routine2.mp3",
-            "我喜歡的動物": "ref_animal.mp3"
+            "我喜歡的活動": "activity.mp3", "拜訪爺爺的一天": "grandpa.mp3",
+            "我和朋友玩耍": "friends.mp3", "我的生活作息": "routine.mp3",
+            "我喜歡的天氣": "weather.mp3", "我喜歡吃的東西": "food.mp3",
+            "伴我讀書的用品": "study.mp3", "我喜歡的職業": "job.mp3",
+            "我喜歡的活動2": "activity2.mp3", "我的生活作息2": "routine2.mp3",
+            "我喜歡的動物": "animal.mp3"
         }
         
         target_audio = audio_mapping.get(prompt_text)
@@ -254,8 +254,6 @@ def main():
             audio_path = os.path.join("audio", "prompts", target_audio)
             if os.path.exists(audio_path):
                 st.audio(audio_path, format="audio/mp3")
-            else:
-                st.caption(f"🔇 此題尚無語音提示 ({target_audio})")
 
         target_images = oral_prompts[prompt_text]
         cols = st.columns(2)
@@ -316,4 +314,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.5 (UI Font Enlargement & Audio Helper)")
+st.sidebar.caption("v1.6 (Clean UI & Audio Optimization)")
