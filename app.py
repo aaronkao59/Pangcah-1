@@ -196,9 +196,9 @@ def main():
         # --- [新增：萬用前言與結語展開區塊] ---
         with st.expander("🗣️ （前言）"):
             st.markdown("""
-            1. **(預留前言族語短語 1)**
-            2. **(預留前言族語短語 2)**
-            3. **(預留前言族語短語 3)**
+            1. **(01 Itini tona coka, mahaenay ko harateng no mako.)**
+            2. **(02 Itini tona coka, ira ko cecay harateng no mako.)**
+            3. **(03 O no mako a hareteng itini tona coka i.)**
             """)
             intro_audio = os.path.join("audio", "reference", "intro.mp3")
             if os.path.exists(intro_audio):
@@ -208,9 +208,9 @@ def main():
 
         with st.expander("🗣️ （結語）"):
             st.markdown("""
-            1. **(預留結語族語短語 1)**
-            2. **(預留結語族語短語 2)**
-            3. **(預留結語族語短語 3)**
+            1. **(01 O tada harateng no mako koni.)**
+            2. **(02 Mahaenay ko harateng no mako.)**
+            3. **(03 Hatini aca ko harateng no mako.)**
             """)
             outro_audio = os.path.join("audio", "reference", "outro.mp3")
             if os.path.exists(outro_audio):
