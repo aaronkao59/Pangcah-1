@@ -210,9 +210,9 @@ def main():
 
         with st.expander("🗣️ （結語）"):
             outro_phrases = [
-                ("1. (01 O tada harateng no mako koni.)", "end01.mp3"),
-                ("2. (02 Mahaenay ko harateng no mako.)", "end02.mp3"),
-                ("3. (03 Hatini aca ko harateng no mako.)", "end03.mp3")
+                ("1. (01 O tada harateng no mako koni.)", "outro01.mp3"),
+                ("2. (02 Mahaenay ko harateng no mako.)", "outro02.mp3"),
+                ("3. (03 Hatini aca ko harateng no mako.)", "outro03.mp3")
             ]
             for text, fname in outro_phrases:
                 st.markdown(f"**{text}**")
