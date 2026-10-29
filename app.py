@@ -254,16 +254,16 @@ def main():
         # --- [資料層] 11題看圖說話的固定參考答案與音檔對應表 ---
         reference_data = {
             "我喜歡的活動": {"text": "o kaolahan ako a demak, Maolah kako a masakero, Maolah kako a talalotok, Maolah kako a misa'osi, Maolah kako a micoka.", "audio": "ref_activity.mp3"},
-            "拜訪爺爺的一天": {"text": "miliso' kami ci akongan, pafeli to kafong ci akongan, mipadang ci akongan, pafeli to hana ci akongan,", "audio": "ref_grandpa.mp3"},
+            "拜訪爺爺的一天": {"text": "miliso' kami ci akongan, pafeli kami to kafong ci akongan, mipadang kami ci akongan, pafeli kami to hana ci akongan,", "audio": "ref_grandpa.mp3"},
             "我和朋友玩耍": {"text": "Maolah kami mimali, Maolah kami masakero, Maolah kami misalama, Maolah kami comikay.", "audio": "ref_friends.mp3"},
-            "我的生活作息": {"text": "lomowad kako, talalotok kako, komaen kako, misa'osi kako.", "audio": "ref_routine.mp3"},
+            "我的生活作息": {"text": "lomowad kako i papacem, talalotok kako i dafak, komaen kako i kalahokan, misa'osi kako i dadaya.", "audio": "ref_routine.mp3"},
             "我喜歡的天氣": {"text": "ma'orad ko romi'ad, macidal ko romi'ad, makadit ko romi'ad, fangcal ko romi'ad.", "audio": "ref_weather.mp3"},
-            "我喜歡吃的東西": {"text": " Ira ko arilay, konga, mami’ ato pawli.", "audio": "ref_food.mp3"},
-            "伴我讀書的用品": {"text": "ira ko ciwming, ira ko impic, ira ko saroparop, ira ko codad,", "audio": "ref_study.mp3"},
+            "我喜歡吃的東西": {"text": " o kaolahan ako a kakaenen,  Ira ko arilay, ira ko konga, ira ko mami’ ato pawli.", "audio": "ref_food.mp3"},
+            "伴我讀書的用品": {"text": "ira ko cecay a ciwming, ira ko cecay a  impic, ira ko cecay a  sararop, ira ko enem a codad,", "audio": "ref_study.mp3"},
             "我喜歡的職業": {"text": "ira ko singsi, ira ko ising, ira ko kangkofo, mipasifana' to sito.", "audio": "ref_job.mp3"},
             "我喜歡的活動2": {"text": "Maolah kako masakero, Maolah kako romadiw, Maolah kako minengneng to tilifi, Maolah kako misalama ato waco.", "audio": "ref_activity2.mp3"},
             "我的生活作息2": {"text": "milosimet kako to riko', mafoti' kako, mifaca' kako to riko', milali'op kako,", "audio": "ref_routine2.mp3"},
-            "我喜歡的動物": {"text": "Ira ko fafoy, siri, lotong ato foting. Maolah kako to siri. Maolah kako to fafoy. Maolah kako to lotong. Maolah kako to foting.", "audio": "ref_animal.mp3"}
+            "我喜歡的動物": {"text": "Maolah kako to fafoy, Maolah kako to kolong, Maolah kako to lotong,  Maolah kako to foting.", "audio": "ref_animal.mp3"}
         }
 
         # --- [UIUX層] 顯示標準參考答案與語音示範 ---
