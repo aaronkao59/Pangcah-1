@@ -259,11 +259,11 @@ def main():
             "我的生活作息": {"text": "lomowad kako, talalotok kako, komaen kako, misa'osi kako.", "audio": "ref_routine.mp3"},
             "我喜歡的天氣": {"text": "ma'orad ko romi'ad, macidal ko romi'ad, makadit ko romi'ad, fangcal ko romi'ad.", "audio": "ref_weather.mp3"},
             "我喜歡吃的東西": {"text": " Ira ko arilay, konga, mami’ ato pawli.", "audio": "ref_food.mp3"},
-            "伴我讀書的用品": {"text": "Maolah kako masakero, Maolah kako romadiw, Maolah kako minengneng to tilifi, Maolah kako misalama ato waco.", "audio": "ref_study.mp3"},
-            "我喜歡的職業": {"text": "Mafana' kako mifaca' to riko', Milali'op ko safa ako i matini, Mafoti'ay ho ko safa ako.", "audio": "ref_job.mp3"},
-            "我喜歡的活動2": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_activity2.mp3"},
-            "我的生活作息2": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_routine2.mp3"},
-            "我喜歡的動物": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_animal.mp3"}
+            "伴我讀書的用品": {"text": "ira ko ciwming, ira ko impic, ira ko saroparop, ira ko codad,", "audio": "ref_study.mp3"},
+            "我喜歡的職業": {"text": "ira ko singsi, ira ko ising, ira ko kangkofo, mipasifana' to sito.", "audio": "ref_job.mp3"},
+            "我喜歡的活動2": {"text": "Maolah kako masakero, Maolah kako romadiw, Maolah kako minengneng to tilifi, Maolah kako misalama ato waco.", "audio": "ref_activity2.mp3"},
+            "我的生活作息2": {"text": "milosimet kako to riko', mafoti' kako, mifaca' kako to riko', milali'op kako,", "audio": "ref_routine2.mp3"},
+            "我喜歡的動物": {"text": "Ira ko fafoy, siri, lotong ato foting. Maolah kako to siri. Maolah kako to fafoy. Maolah kako to lotong. Maolah kako to foting.", "audio": "ref_animal.mp3"}
         }
 
         # --- [UIUX層] 顯示標準參考答案與語音示範 ---
