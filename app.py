@@ -289,15 +289,22 @@ def main():
         
         ref_info = reference_data.get(prompt_text)
         if ref_info:
-            # 顯示阿美語標準文字 (可根據 10-5 詞彙規範進行精確校準)
-            st.info(f"**📖 參考句型：**\n\n{ref_info['text']}")
+            # --- 調整字體大小與美化參考句型 ---
+            st.markdown(f"""
+            <div style="background-color: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="font-weight: bold; color: #0d47a1; font-size: 1.2rem; margin-bottom: 15px;">📖 參考句型：</div>
+                <div style="font-size: 1.4rem; color: #1565c0; line-height: 1.6;">{ref_info['text']}</div>
+            </div>
+            """, unsafe_allow_html=True)
             
             # 載入並顯示標準參考音檔
             ref_audio_path = os.path.join("audio", "reference", ref_info["audio"])
             if os.path.exists(ref_audio_path):
                 st.audio(ref_audio_path, format="audio/mp3")
             else:
-                st.caption(f"🔇 尚未配置參考音檔 (預期路徑: {ref_audio_path})")
+                # 明確提示為何找不到音檔以及解決方式
+                st.markdown(f"<span style='color: #64748b; font-size: 14px;'>🔇 尚未配置參考音檔 (預期路徑: <code>{ref_audio_path}</code>)</span>", unsafe_allow_html=True)
+                st.caption("💡 **找不到音檔？** 系統目前偵測不到此音檔，請確認您已將對應的 `.mp3` 檔案放置於上述提示的資料夾路徑中。")
         else:
             st.warning("⚠️ 系統尚未建檔此題的參考資料")
 
@@ -309,4 +316,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.4 (Atomic Audio Reference Integration)")
+st.sidebar.caption("v1.5 (UI Font Enlargement & Audio Helper)")
