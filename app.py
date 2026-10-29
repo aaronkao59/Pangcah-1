@@ -254,7 +254,7 @@ def main():
         # --- [資料層] 11題看圖說話的固定參考答案與音檔對應表 ---
         reference_data = {
             "我喜歡的活動": {"text": "o kaolahan ako a demak, Maolah kako a masakero, Maolah kako a talalotok, Maolah kako a misa'osi, Maolah kako a micoka.", "audio": "ref_activity.mp3"},
-            "拜訪爺爺的一天": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_grandpa.mp3"},
+            "拜訪爺爺的一天": {"text": "miliso' kami ci akongan. pafeli to kafong ci akongan. mipadang ci akongan. pafeli to hana ci akongan.", "audio": "ref_grandpa.mp3"},
             "我和朋友玩耍": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_friends.mp3"},
             "我的生活作息": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_routine.mp3"},
             "我喜歡的天氣": {"text": "（請在此填入標準阿美語參考文字）", "audio": "ref_weather.mp3"},
