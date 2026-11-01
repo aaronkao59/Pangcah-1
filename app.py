@@ -25,17 +25,17 @@ def load_static_data():
     vocab_df = vocab_df[vocab_df['word'].apply(is_multi_syllable)]
     
     prompts_dict = {
-        "我喜歡的活動 o kaolahan ako a demak": ["activity_01.png", "activity_02.png", "activity_03.png", "activity_04.png"],
-        "拜訪爺爺的一天": ["grandpa_01.png", "grandpa_02.png", "grandpa_03.png", "grandpa_04.png"],
-        "我和朋友玩耍": ["friends_01.png", "friends_02.png", "friends_03.png", "friends_04.png"],
-        "我的生活作息": ["routine_01.png", "routine_02.png", "routine_03.png", "routine_04.png"],
-        "我喜歡的天氣": ["weather_01.png", "weather_02.png", "weather_03.png", "weather_04.png"],
-        "我喜歡吃的東西": ["food_01.png", "food_02.png", "food_03.png", "food_04.png"],
-        "伴我讀書的用品": ["study_01.png", "study_02.png", "study_03.png", "study_04.png"],
-        "我喜歡的職業": ["job_01.png", "job_02.png", "job_03.png", "job_04.png"],
-        "我喜歡的活動2": ["activity2_01.png", "activity2_02.png", "activity2_03.png", "activity2_04.png"],
-        "我的生活作息2": ["routine2_01.png", "routine2_02.png", "routine2_03.png", "routine2_04.png"],
-        "我喜歡的動物": ["animal_01.png", "animal_02.png", "animal_03.png", "animal_04.png"]
+        "我喜歡的活動(o kaolahan ako a demak)": ["activity_01.png", "activity_02.png", "activity_03.png", "activity_04.png"],
+        "拜訪爺爺的一天(miliso' ci akongan)": ["grandpa_01.png", "grandpa_02.png", "grandpa_03.png", "grandpa_04.png"],
+        "我和朋友玩耍(misalama ato widang)": ["friends_01.png", "friends_02.png", "friends_03.png", "friends_04.png"],
+        "我的生活作息(o kalo'orip ako)": ["routine_01.png", "routine_02.png", "routine_03.png", "routine_04.png"],
+        "我喜歡的天氣(o kaolahan ako a romi'ad)": ["weather_01.png", "weather_02.png", "weather_03.png", "weather_04.png"],
+        "我喜歡吃的東西(o kaolahan ako a kakaenen)": ["food_01.png", "food_02.png", "food_03.png", "food_04.png"],
+        "伴我讀書的用品(o sapitilid ako a losidan)": ["study_01.png", "study_02.png", "study_03.png", "study_04.png"],
+        "我喜歡的職業(o kaolahan ako a tayal)": ["job_01.png", "job_02.png", "job_03.png", "job_04.png"],
+        "我喜歡的活動2(o kaolahan ako a demak)": ["activity2_01.png", "activity2_02.png", "activity2_03.png", "activity2_04.png"],
+        "我的生活作息2(o kalo'orip ako)": ["routine2_01.png", "routine2_02.png", "routine2_03.png", "routine2_04.png"],
+        "我喜歡的動物(o kaolahan ako a pinanowang)": ["animal_01.png", "animal_02.png", "animal_03.png", "animal_04.png"]
     }
     return vocab_df, prompts_dict
 
