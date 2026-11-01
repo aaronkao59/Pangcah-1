@@ -25,7 +25,7 @@ def load_static_data():
     vocab_df = vocab_df[vocab_df['word'].apply(is_multi_syllable)]
     
     prompts_dict = {
-        "我喜歡的活動": ["activity_01.png", "activity_02.png", "activity_03.png", "activity_04.png"],
+        "我喜歡的活動 o kaolahan ako a demak": ["activity_01.png", "activity_02.png", "activity_03.png", "activity_04.png"],
         "拜訪爺爺的一天": ["grandpa_01.png", "grandpa_02.png", "grandpa_03.png", "grandpa_04.png"],
         "我和朋友玩耍": ["friends_01.png", "friends_02.png", "friends_03.png", "friends_04.png"],
         "我的生活作息": ["routine_01.png", "routine_02.png", "routine_03.png", "routine_04.png"],
