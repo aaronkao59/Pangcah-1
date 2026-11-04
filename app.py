@@ -189,11 +189,32 @@ def main():
             st.audio(audio_path, format="audio/mp3")
         else:
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
+            
+        # --- [新增功能] 簡單問答參考答案資料庫與顯示隱藏機制 ---
+        # 您可在此處自由擴充或修改每一題的對應參考答案
+        qa_reference_data = {
+            "1-1": "Nga'ay ho, o ngangan ako ci sawmAh. (你好，我的名字是 sawmAh。)",
+            "1-2": "Itini i Taypak ko loma' ako. (我的家在台北。)",
+            "1-3": "Maolah kako mimali. (我喜歡打球。)",
+            "1-4": "Ira ko tosa a wawa ako. (我有兩個小孩。)",
+            "1-5": "Fangcal ko romi'ad anini. (今天天氣很好。)"
+        }
+        
+        st.write("") 
+        with st.expander("💬 答題參考"):
+            ref_key = f"{set_num}-{q_idx}"
+            ref_text = qa_reference_data.get(ref_key, "⚠️ 尚未建檔此題的參考答案，請於 `app.py` 中的 `qa_reference_data` 字典中新增對應題號。")
+            
+            st.markdown(f"""
+            <div style="background-color: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 5px solid #16a34a; margin-top: 5px;">
+                <div style="font-weight: bold; color: #166534; font-size: 1.1rem; margin-bottom: 8px;">📖 參考句型：</div>
+                <div style="font-size: 1.2rem; color: #1565c0; line-height: 1.5;">{ref_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
     elif app_mode == "🖼️ 看圖說話":
         st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案/要熟記每張圖的說法)</span></h3></div>', unsafe_allow_html=True)
         
-        # --- [新增：萬用前言與結語展開區塊 (精準拆分音檔)] ---
         with st.expander("🗣️ （前言）三選一"):
             intro_phrases = [
                 ("1. (01 Itini tona coka, mahaenay ko harateng no mako.)", "intro01.mp3"),
@@ -222,7 +243,7 @@ def main():
                 else:
                     st.caption(f"🔇 尚未配置音檔 ({fpath})")
         
-        st.write("") # 增加微小間距區隔
+        st.write("") 
         
         topic_list = list(oral_prompts.keys())
         
@@ -251,7 +272,6 @@ def main():
 
         st.divider()
         
-        # --- [資料層] 11題看圖說話的固定參考答案與音檔對應表 ---
         reference_data = {
             "我喜歡的活動": {"text": "(o kaolahan ako a demak), Maolah kako a masakero, Maolah kako a talalotok, Maolah kako a misa'osi, Maolah kako a micoka.", "audio": "ref_activity.mp3"},
             "拜訪爺爺的一天": {"text": "(miliso' kami ci akongan), pafeli kami to kafong ci akongan, mipadang kami ci akongan, pafeli kami to hana ci akongan,", "audio": "ref_grandpa.mp3"},
@@ -266,16 +286,12 @@ def main():
             "我喜歡的動物": {"text": "(o kaolahan ako a pinanowang), Maolah kako to fafoy, Maolah kako to kolong, Maolah kako to lotong,  Maolah kako to foting.", "audio": "ref_animal.mp3"}
         }
 
-        # --- [UIUX層] 顯示標準參考答案與語音示範 ---
         st.markdown('<div class="exam-banner" style="background-color: #f0fdf4; border-left-color: #16a34a;"><h3>💡 參考答案</h3></div>', unsafe_allow_html=True)
         
         ref_info = reference_data.get(prompt_text)
         if ref_info:
-            # --- 處理文字斷行：遇逗號換行 ---
-            # 將句中的 ", " 替換為 ", <br>" 以達成斷行效果
             formatted_text = ref_info['text'].replace(", ", ",<br>")
             
-            # --- 調整字體大小與美化參考句型 ---
             st.markdown(f"""
             <div style="background-color: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
                 <div style="font-weight: bold; color: #0d47a1; font-size: 1.2rem; margin-bottom: 15px;">📖 參考句型：</div>
@@ -283,12 +299,10 @@ def main():
             </div>
             """, unsafe_allow_html=True)
             
-            # 載入並顯示標準參考音檔
             ref_audio_path = os.path.join("audio", "reference", ref_info["audio"])
             if os.path.exists(ref_audio_path):
                 st.audio(ref_audio_path, format="audio/mp3")
             else:
-                # 明確提示為何找不到音檔以及解決方式
                 st.markdown(f"<span style='color: #64748b; font-size: 14px;'>🔇 尚未配置參考音檔 (預期路徑: <code>{ref_audio_path}</code>)</span>", unsafe_allow_html=True)
                 st.caption("💡 **找不到音檔？** 系統目前偵測不到此音檔，請確認您已將對應的 `.mp3` 檔案放置於上述提示的資料夾路徑中。")
         else:
@@ -302,4 +316,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.7 (Clean UI & Comma Line-Break Optimization)")
+st.sidebar.caption("v1.8 (Added Q&A Reference Toggle System)")
