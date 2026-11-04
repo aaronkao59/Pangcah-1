@@ -39,6 +39,15 @@ def load_static_data():
     }
     return vocab_df, prompts_dict
 
+@st.cache_data
+def load_qa_reference():
+    """從外部 JSON 檔案載入問答題參考資料"""
+    file_path = os.path.join("data", "qa_reference.json")
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
 # --- [介面視覺規範] ---
 st.markdown("""
     <style>
@@ -95,7 +104,6 @@ def main():
                             audio_bytes = f.read()
                         audio_base64 = base64.b64encode(audio_bytes).decode()
                         
-                        # --- 🔊 終極解法：使用 Html 沙盒組件保護 JavaScript ---
                         html_code = f"""
                         <!DOCTYPE html>
                         <html>
@@ -190,20 +198,13 @@ def main():
         else:
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
             
-        # --- [新增功能] 簡單問答參考答案資料庫與顯示隱藏機制 ---
-        # 您可在此處自由擴充或修改每一題的對應參考答案
-        qa_reference_data = {
-            "1-1": "Nga'ay ho, o ngangan ako ci sawmAh. (你好，我的名字是 sawmAh。)",
-            "1-2": "Itini i Taypak ko loma' ako. (我的家在台北。)",
-            "1-3": "Maolah kako mimali. (我喜歡打球。)",
-            "1-4": "Ira ko tosa a wawa ako. (我有兩個小孩。)",
-            "1-5": "Fangcal ko romi'ad anini. (今天天氣很好。)"
-        }
+        # --- 外部讀取 JSON 資料，顯示與隱藏答題參考 ---
+        qa_reference_data = load_qa_reference()
         
         st.write("") 
-        with st.expander("💬 答題參考"):
+        with st.expander("答題參考"):
             ref_key = f"{set_num}-{q_idx}"
-            ref_text = qa_reference_data.get(ref_key, "⚠️ 尚未建檔此題的參考答案，請於 `app.py` 中的 `qa_reference_data` 字典中新增對應題號。")
+            ref_text = qa_reference_data.get(ref_key, "⚠️ 尚未建檔此題的參考答案，請確認 data/qa_reference.json 是否有此題號。")
             
             st.markdown(f"""
             <div style="background-color: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 5px solid #16a34a; margin-top: 5px;">
@@ -316,4 +317,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.8 (Added Q&A Reference Toggle System)")
+st.sidebar.caption("v1.9 (External JSON Q&A Reference Toggle System)")
