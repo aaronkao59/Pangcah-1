@@ -4,7 +4,7 @@ import random
 import os
 import json
 import base64
-import streamlit.components.v1 as components  # <--- 沙盒魔法的關鍵
+import streamlit.components.v1 as components
 
 # --- [元數據與效能設定] ---
 st.set_page_config(page_title="Amis-Pro 族語認證衝刺", page_icon="🌊", layout="wide")
@@ -202,16 +202,34 @@ def main():
         qa_reference_data = load_qa_reference()
         
         st.write("") 
+        ref_key = f"{set_num}-{q_idx}"
+        ref_data = qa_reference_data.get(ref_key)
+
+        # 底層資料解耦：向下相容純字串，向上擴充為字典格式（包含 concept 欄位）
+        if isinstance(ref_data, dict):
+            ref_text = ref_data.get("reference", "⚠️ 尚未建檔此題的參考答案。")
+            concept_text = ref_data.get("concept", "💡 可於 JSON 中擴充此題的重點解說。")
+        else:
+            ref_text = ref_data if ref_data else "⚠️ 尚未建檔此題的參考答案，請確認 data/qa_reference.json 是否有此題號。"
+            concept_text = "💡 可於外部 JSON 檔案擴充此題的重要概念。"
+        
         with st.expander("答題參考"):
-            ref_key = f"{set_num}-{q_idx}"
-            ref_text = qa_reference_data.get(ref_key, "⚠️ 尚未建檔此題的參考答案，請確認 data/qa_reference.json 是否有此題號。")
-            
             st.markdown(f"""
             <div style="background-color: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 5px solid #16a34a; margin-top: 5px;">
                 <div style="font-weight: bold; color: #166534; font-size: 1.1rem; margin-bottom: 8px;">📖 參考句型：</div>
                 <div style="font-size: 1.2rem; color: #1565c0; line-height: 1.5;">{ref_text}</div>
             </div>
             """, unsafe_allow_html=True)
+
+        # --- 新增：重要概念資訊欄 (高視覺權重防禦區塊) ---
+        st.markdown(f"""
+        <div style="border: 2px solid #ef4444; border-radius: 8px; padding: 15px; margin-top: 15px; background-color: #ffffff;">
+            <div style="font-weight: bold; color: #1e293b; font-size: 1.1rem; margin-bottom: 8px;">重要概念</div>
+            <div style="font-size: 1.1rem; color: #475569; line-height: 1.5;">
+                {concept_text}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)[cite: 1, 2]
 
     elif app_mode == "🖼️ 看圖說話":
         st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案/要熟記每張圖的說法)</span></h3></div>', unsafe_allow_html=True)
@@ -317,4 +335,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.9 (External JSON Q&A Reference Toggle System)")
+st.sidebar.caption("v1.9.1 (Telemetry Enhanced: Added Important Concepts Block)")
