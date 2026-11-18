@@ -205,13 +205,11 @@ def main():
         ref_key = f"{set_num}-{q_idx}"
         ref_data = qa_reference_data.get(ref_key)
 
-        # 底層資料解耦：向下相容純字串，向上擴充為字典格式（包含 concept 欄位）
+        # 僅保留參考答案的 JSON 讀取
         if isinstance(ref_data, dict):
             ref_text = ref_data.get("reference", "⚠️ 尚未建檔此題的參考答案。")
-            concept_text = ref_data.get("concept", "💡 可於 JSON 中擴充此題的重點解說。")
         else:
             ref_text = ref_data if ref_data else "⚠️ 尚未建檔此題的參考答案，請確認 data/qa_reference.json 是否有此題號。"
-            concept_text = "💡 可於外部 J 檔案擴充此題的重要概念。"
         
         with st.expander("答題參考"):
             st.markdown(f"""
@@ -221,12 +219,12 @@ def main():
             </div>
             """, unsafe_allow_html=True)
 
-        # --- 新增：重要概念資訊欄 (高視覺權重防禦區塊) ---
-        st.markdown(f"""
+        # --- 固定的重要概念資訊欄 ---
+        st.markdown("""
         <div style="border: 2px solid #ef4444; border-radius: 8px; padding: 15px; margin-top: 15px; background-color: #ffffff;">
-            <div style="font-weight: bold; color: #1e293b; font-size: 1.1rem; margin-bottom: 8px;">疑問詞種類：</div>
-            <div style="font-size: 1.1rem; color: #475569; line-height: 1.5; white-space: pre-wrap;">
-                {concept_text}
+            <div style="font-weight: bold; color: #1e293b; font-size: 1.2rem; margin-bottom: 12px;">疑問詞種類：</div>
+            <div style="font-size: 1.1rem; color: #475569; line-height: 1.5;">
+                💡 可於外部 JSON 檔案擴充此題的重要概念。
             </div>
         </div>
         """, unsafe_allow_html=True)
