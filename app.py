@@ -229,7 +229,7 @@ def main():
                 {concept_text}
             </div>
         </div>
-        """, unsafe_allow_html=True)[cite: 1, 2]
+        """, unsafe_allow_html=True)
 
     elif app_mode == "🖼️ 看圖說話":
         st.markdown('<div class="exam-banner"><h3>看圖說話 <span style="font-size: 16px; color: #64748b; font-weight: normal;">(附參考答案/要熟記每張圖的說法)</span></h3></div>', unsafe_allow_html=True)
@@ -335,4 +335,4 @@ if __name__ == "__main__":
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 sawmAh singsi. All Rights Reserved.")
-st.sidebar.caption("v1.9.1 (Telemetry Enhanced: Added Important Concepts Block)")
+st.sidebar.caption("v1.9.2 (Bug Fix: Removed invalid syntax in markdown block)")
