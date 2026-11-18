@@ -224,7 +224,7 @@ def main():
         # --- 新增：重要概念資訊欄 (高視覺權重防禦區塊) ---
         st.markdown(f"""
         <div style="border: 2px solid #ef4444; border-radius: 8px; padding: 15px; margin-top: 15px; background-color: #ffffff;">
-            <div style="font-weight: bold; color: #1e293b; font-size: 1.1rem; margin-bottom: 8px;">重要概念</div>
+            <div style="font-weight: bold; color: #1e293b; font-size: 1.1rem; margin-bottom: 8px;">疑問詞種類</div>
             <div style="font-size: 1.1rem; color: #475569; line-height: 1.5;">
                 {concept_text}
             </div>
