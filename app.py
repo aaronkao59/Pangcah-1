@@ -217,7 +217,7 @@ def main():
             st.markdown(f"""
             <div style="background-color: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 5px solid #16a34a; margin-top: 5px;">
                 <div style="font-weight: bold; color: #166534; font-size: 1.1rem; margin-bottom: 8px;">📖 參考句型：</div>
-                <div style="font-size: 1.2rem; color: #1565c0; line-height: 1.5;">{ref_text}</div>
+                <div style="font-size: 1.2rem; color: #1565c0; line-height: 1.5; white-space: pre-wrap;">{ref_text}</div>
             </div>
             """, unsafe_allow_html=True)
 
