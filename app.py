@@ -297,7 +297,7 @@ def main():
             "我喜歡的天氣": {"text": "(o kaolahan ako a romi'ad), ma'orad ko romi'ad, macidal ko romi'ad, makadit ko romi'ad, fangcal ko romi'ad.", "audio": "ref_weather.mp3"},
             "我喜歡吃的東西": {"text": "(o kaolahan ako a kakaenen), Ira ko arilay, ira ko konga, ira ko mami’, ira ko pawli.", "audio": "ref_food.mp3"},
             "伴我讀書的用品": {"text": "(o sapitilid ako a losidan), ira ko cecay a ciwming, ira ko cecay a  impic, ira ko cecay a  sararop, ira ko enem a codad,", "audio": "ref_study.mp3"},
-            "我喜歡的職業": {"text": "(o kaolahan ako a tayal), ira ko singsi, ira ko ising, ira ko kangkofo, mipasifana' to sito.", "audio": "ref_job.mp3"},
+            "我喜歡的職業": {"text": "(o kaolahan ako a tayal), ira ko singsi, mipasifana' to sito, ira ko ising, ira ko kangkofo.", "audio": "ref_job.mp3"},
             "我喜歡的活動2": {"text": "(o kaolahan ako a demak), Maolah kako masakero, Maolah kako romadiw, Maolah kako minengneng to tilifi, Maolah kako misalama ato waco.", "audio": "ref_activity2.mp3"},
             "我的生活作息2": {"text": "(o kalo'orip ako), milosimet kako to riko', mafoti' kako, mifaca' kako to riko', milali'op kako,", "audio": "ref_routine2.mp3"},
             "我喜歡的動物": {"text": "(o kaolahan ako a pinanowang), Maolah kako to fafoy, Maolah kako to kolong, Maolah kako to lotong,  Maolah kako to foting.", "audio": "ref_animal.mp3"}
