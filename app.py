@@ -299,7 +299,7 @@ def main():
             "伴我讀書的用品": {"text": "(o sapitilid ako a losidan), ira ko cecay a ciwming, ira ko cecay a  impic, ira ko cecay a  sararop, ira ko enem a codad,", "audio": "ref_study.mp3"},
             "我喜歡的職業": {"text": "(o kaolahan ako a tayal), ira ko singsi, mipasifana' to sito, ira ko ising, ira ko kangkofo.", "audio": "ref_job.mp3"},
             "我喜歡的活動2": {"text": "(o kaolahan ako a demak), Maolah kako masakero, Maolah kako romadiw, Maolah kako minengneng to tilifi, Maolah kako misalama ato waco.", "audio": "ref_activity2.mp3"},
-            "我的生活作息2": {"text": "(o kalo'orip ako), milosimet to riko' kako, mafoti' kako, mifaca' to riko' kako, milali'op kako,", "audio": "ref_routine2.mp3"},
+            "我的生活作息2": {"text": "(o kalo'orip no mako), milosimet to riko' kako, mafoti' kako, mifaca' to riko' kako, milali'op kako,", "audio": "ref_routine2.mp3"},
             "我喜歡的動物": {"text": "(o kaolahan ako a pinanowang), Maolah kako to fafoy, Maolah kako to kolong, Maolah kako to lotong,  Maolah kako to foting.", "audio": "ref_animal.mp3"}
         }
 
