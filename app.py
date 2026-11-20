@@ -198,19 +198,30 @@ def main():
         else:
             st.warning(f"⚠️ 找不到音檔：{audio_filename}，請確認是否已放入 audio/qa/ 資料夾中。")
             
-        # --- 外部讀取 JSON 資料，顯示與隱藏答題參考 ---
+        # --- 外部讀取 JSON 資料，顯示與隱藏題目翻譯及答題參考 ---
         qa_reference_data = load_qa_reference()
         
         st.write("") 
         ref_key = f"{set_num}-{q_idx}"
         ref_data = qa_reference_data.get(ref_key)
 
-        # 僅保留參考答案的 JSON 讀取
         if isinstance(ref_data, dict):
+            trans_text = ref_data.get("translation", "⚠️ 尚未建檔此題的中文翻譯。")
             ref_text = ref_data.get("reference", "⚠️ 尚未建檔此題的參考答案。")
         else:
+            trans_text = "⚠️ 尚未建檔此題的中文翻譯，請確認 data/qa_reference.json 格式。"
             ref_text = ref_data if ref_data else "⚠️ 尚未建檔此題的參考答案，請確認 data/qa_reference.json 是否有此題號。"
-        
+
+        # 新增：題目中文翻譯（可隱藏/顯示）
+        with st.expander("題目中文翻譯"):
+            st.markdown(f"""
+            <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; border-left: 5px solid #3b82f6; margin-top: 5px;">
+                <div style="font-weight: bold; color: #1e40af; font-size: 1.1rem; margin-bottom: 8px;">🗣️ 題目翻譯：</div>
+                <div style="font-size: 1.2rem; color: #334155; line-height: 1.5; white-space: pre-wrap;">{trans_text}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # 原有：答題參考（可隱藏/顯示）
         with st.expander("答題參考"):
             st.markdown(f"""
             <div style="background-color: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 5px solid #16a34a; margin-top: 5px;">
