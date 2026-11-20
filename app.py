@@ -206,8 +206,8 @@ def main():
         ref_data = qa_reference_data.get(ref_key)
 
         if isinstance(ref_data, dict):
-            trans_text = ref_data.get("translation", "⚠️ 尚未建檔此題的中文翻譯。")
-            ref_text = ref_data.get("reference", "⚠️ 尚未建檔此題的參考答案。")
+            trans_text = ref_data.get("translation") or "⚠️ 尚未建檔此題的中文翻譯。"
+            ref_text = ref_data.get("reference") or "⚠️ 尚未建檔此題的參考答案。"
         else:
             trans_text = "⚠️ 尚未建檔此題的中文翻譯，請確認 data/qa_reference.json 格式。"
             ref_text = ref_data if ref_data else "⚠️ 尚未建檔此題的參考答案，請確認 data/qa_reference.json 是否有此題號。"
